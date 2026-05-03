@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import useActorSearch, { TMDB_IMG, usePopularActors } from "../hooks/useActorSearch";
+import useActorSearch, { usePopularActors } from "../hooks/useActorSearch";
+import { IMAGE_BASE } from "../api/tmdb";
 
 function ActorCard({ actor, selected, onToggle, index }) {
-  const imgSrc = actor.profile_path ? `${TMDB_IMG}${actor.profile_path}` : null;
+  const imgSrc = actor.profile_path ? `${IMAGE_BASE}${actor.profile_path}` : null;
   const initials = actor.name.split(' ').map(n => n[0]).join('').substring(0, 2);
 
   return (
@@ -55,21 +56,13 @@ function ActorCard({ actor, selected, onToggle, index }) {
   );
 }
 
-export default function ActorPicker({ actors, onSelect }) {
+export default function ActorPicker({ actors, onToggle }) {
   const { actors: searchResults, isLoading, setQuery } = useActorSearch();
   const { data: popularActors = [], isLoading: isPopularLoading } = usePopularActors();
 
   const isSearching = searchResults.length > 0;
   const displayList = isSearching ? searchResults : popularActors;
   const showLoading = isLoading || (isPopularLoading && !isSearching);
-
-  const toggleActor = (actor) => {
-    const updated = actors.find((a) => a.id === actor.id)
-      ? actors.filter((a) => a.id !== actor.id)
-      : [...actors, actor];
-
-    onSelect(updated);
-  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -102,7 +95,7 @@ export default function ActorPicker({ actors, onSelect }) {
             actor={actor}
             index={i}
             selected={!!actors.find((a) => a.id === actor.id)}
-            onToggle={toggleActor}
+            onToggle={onToggle}
           />
         ))}
       </div>

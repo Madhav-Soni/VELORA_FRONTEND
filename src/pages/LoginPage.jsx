@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import useUserStore from '../store/useUserStore'
 
 const BACKDROP = 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'
 

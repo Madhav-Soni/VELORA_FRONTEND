@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import useUserStore from "../store/useUserStore";
+import { useCineStore } from "../store/useCineStore";
 import ActorPicker from "../components/ActorPicker";
 
 const GENRES = [
@@ -14,17 +14,12 @@ const GENRES = [
   { id: 53, name: "Thriller" }, { id: 37, name: "Western" },
 ];
 
-
-
-
-
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const setPreferences = useUserStore(s => s.setPreferences);
+  const { setSelectedActors, setSelectedGenres, setIsOnboarded } = useCineStore();
   const [step, setStep] = useState(0);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
-
 
   const toggleGenre = (genre) => {
     setGenres((prev) =>
@@ -35,7 +30,9 @@ export default function OnboardingPage() {
   };
 
   const handleFinish = () => {
-    setPreferences({ actors, genres });
+    setSelectedActors(actors);
+    setSelectedGenres(genres);
+    setIsOnboarded(true);
     navigate("/home");
   };
 
@@ -44,11 +41,11 @@ export default function OnboardingPage() {
       title: "Pick your favourite actors",
       subtitle: "Search or pick from popular — select at least 3 to continue",
       content: (
-  <ActorPicker
-    actors={actors}
-    onSelect={setActors}
-  />
-),
+        <ActorPicker
+          actors={actors}
+          onToggle={(actor) => setActors(prev => prev.find(a => a.id === actor.id) ? prev.filter(a => a.id !== actor.id) : [...prev, actor])}
+        />
+      ),
       canNext: actors.length >= 3,
     },
     {
@@ -78,7 +75,6 @@ export default function OnboardingPage() {
       ),
       canNext: genres.length > 0,
     },
-
   ];
 
   const current = steps[step];
