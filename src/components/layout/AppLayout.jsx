@@ -5,16 +5,16 @@ import Topbar from "./Topbar";
 import MovieModal from "../MovieModal";
 import { useCineStore } from "../../store/useCineStore";
 import { backend } from "../../api/backend";
-import { useWatchlistStore } from "../../store/useWatchlistStore";
 import { tmdbExt } from "../../api/tmdb";
 
 export default function AppLayout() {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
-  const { userId } = useCineStore();
-  const { watchlist, setWatchlist } = useWatchlistStore();
+  const { userId, watchlist, setWatchlist } = useCineStore();
 
-  // Track whether we've already hydrated so we don't re-fetch on every render
+  // Prevents double-hydration on re-renders
   const hydratedRef = useRef(false);
+  // Skips the very first watchlist change (the hydration itself)
+  const skipSyncRef = useRef(true);
 
   // ── 1. Watch History Sync (fire-and-forget) ───────────────────────────────
   useEffect(() => {
@@ -23,34 +23,38 @@ export default function AppLayout() {
     }
   }, [selectedMovieId, userId]);
 
-  // ── 2. Hydrate watchlist FROM backend once on login ───────────────────────
+  // ── 2. Hydrate watchlist FROM backend on login ────────────────────────────
   useEffect(() => {
-    if (!userId || hydratedRef.current) return;
+    if (!userId) {
+      hydratedRef.current = false;
+      skipSyncRef.current = true;
+      return;
+    }
+    if (hydratedRef.current) return;
     hydratedRef.current = true;
 
     backend
       .getWatchlist(userId)
       .then(async (ids) => {
-        if (!ids || ids.length === 0) return;
-        // ids is an array of TMDB movie IDs stored in the DB
-        const fullMovies = await Promise.all(
-          ids.map((id) => tmdbExt.getMovieDetails(id))
-        );
+        if (!ids || ids.length === 0) {
+          skipSyncRef.current = false;
+          return;
+        }
+        const fullMovies = await Promise.all(ids.map((id) => tmdbExt.getMovieDetails(id)));
         setWatchlist(fullMovies.filter(Boolean));
+        // Allow outgoing sync after hydration settles
+        setTimeout(() => { skipSyncRef.current = false; }, 0);
       })
-      .catch(console.error);
-  }, [userId]); // only re-run if userId changes (login/logout)
+      .catch((err) => {
+        console.error("Watchlist hydration failed:", err);
+        skipSyncRef.current = false;
+      });
+  }, [userId]);
 
-  // ── 3. Sync local watchlist TO backend whenever it changes ────────────────
-  //    Use a ref to skip the very first render (hydration) to avoid a
-  //    redundant sync right after we just fetched from the server.
-  const isFirstSync = useRef(true);
+  // ── 3. Sync local watchlist TO backend on change ──────────────────────────
   useEffect(() => {
     if (!userId) return;
-    if (isFirstSync.current) {
-      isFirstSync.current = false;
-      return;
-    }
+    if (skipSyncRef.current) return;
     const movieIds = watchlist.map((m) => m.id);
     backend.syncWatchlist(userId, movieIds).catch(console.error);
   }, [watchlist, userId]);

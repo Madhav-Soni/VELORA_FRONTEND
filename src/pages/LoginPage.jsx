@@ -27,8 +27,10 @@ export default function LoginPage() {
     try {
       const data = await backend.login(email, password)
       setAuth({ userId: data.userId, token: data.token, name: data.name })
-      // Guards in App.jsx redirect to /onboarding if not yet onboarded
-      navigate('/home')
+      // Navigate directly — avoids the extra redirect bounce from RequireOnboarding
+      // isOnboarded is read after setAuth updates the store synchronously
+      const onboarded = useCineStore.getState().isOnboarded
+      navigate(onboarded ? '/home' : '/onboarding')
     } catch (err) {
       setError(err.message || 'Invalid email or password')
     } finally {

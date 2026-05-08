@@ -1,29 +1,24 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// Deferred import to avoid circular dependency — accessed at call-time only
-const clearWatchlist = () => {
-  // Dynamically access the watchlist store to avoid a circular import at module init
-  import("./useWatchlistStore").then(({ useWatchlistStore }) => {
-    useWatchlistStore.getState().clearWatchlist();
-  });
-};
-
-
 export const useCineStore = create(
   persist(
-    (set) => ({
-      // ── auth ──────────────────────────────────────────────────────────────
+    (set, get) => ({
+      // ── auth ─────────────────────────────────────────────────────────────
       userId: null,
       token: null,
       userName: null,
 
-      // Called after login OR signup
+      /** Called after login OR signup. Safely ignores undefined name. */
       setAuth: ({ userId, token, name }) =>
-        set({ userId, token, userName: name ?? null }),
+        set({
+          userId,
+          token,
+          // Only store name if it's a non-empty string — login may not return it
+          userName: name && typeof name === "string" && name.trim() ? name.trim() : (get().userName ?? null),
+        }),
 
-      logout: () => {
-        clearWatchlist(); // also clear the separate watchlist store
+      logout: () =>
         set({
           userId: null,
           token: null,
@@ -33,8 +28,7 @@ export const useCineStore = create(
           selectedGenres: [],
           selectedMood: null,
           watchlist: [],
-        });
-      },
+        }),
 
       // ── onboarding / preferences ──────────────────────────────────────────
       selectedActors: [],
@@ -54,15 +48,30 @@ export const useCineStore = create(
             : [...state.selectedGenres, genre],
         })),
 
-      // ── legacy setters (kept for backwards compatibility) ─────────────────
-      setUserId: (id) => set({ userId: id }),
-      setToken: (token) => set({ token }),
-
-      // ── watchlist (kept as secondary cache; primary is useWatchlistStore) ─
+      // ── watchlist — single source of truth ───────────────────────────────
       watchlist: [],
+
       setWatchlist: (list) => set({ watchlist: list }),
 
-      // Kept so ProfilePage logout still compiles
+      addToWatchlist: (movie) =>
+        set((state) => ({
+          watchlist: state.watchlist.find((m) => m.id === movie.id)
+            ? state.watchlist
+            : [{ ...movie, addedAt: Date.now() }, ...state.watchlist],
+        })),
+
+      removeFromWatchlist: (movieId) =>
+        set((state) => ({
+          watchlist: state.watchlist.filter((m) => m.id !== movieId),
+        })),
+
+      isInWatchlist: (movieId) => get().watchlist.some((m) => m.id === movieId),
+
+      clearWatchlist: () => set({ watchlist: [] }),
+
+      // ── legacy compat ─────────────────────────────────────────────────────
+      setUserId: (id) => set({ userId: id }),
+      setToken: (token) => set({ token }),
       resetPreferences: () =>
         set({
           selectedActors: [],
@@ -72,8 +81,14 @@ export const useCineStore = create(
           userId: null,
           token: null,
           userName: null,
+          watchlist: [],
         }),
     }),
     { name: "cinematch-prefs" }
   )
 );
+
+// ── Shim: re-export as useWatchlistStore so existing imports keep working ─────
+// This lets MovieCard, MovieModal, WatchlistPage, etc. compile without changes
+// while we migrate them to useCineStore over time.
+export const useWatchlistStore = useCineStore;
