@@ -1,79 +1,67 @@
 import { useCineStore } from "../store/useCineStore";
 
-export const BACKEND_URL = "http://localhost:3000/api";
+export const BACKEND_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
+// ── helper ──────────────────────────────────────────────────────────────────
+async function request(path, options = {}) {
+  const { token } = useCineStore.getState();
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
+
+  const res = await fetch(`${BACKEND_URL}${path}`, { ...options, headers });
+
+  // Global 401 handler — token expired or invalid
+  if (res.status === 401) {
+    useCineStore.getState().logout();
+    // Let the caller handle the rejection; App router will redirect on logout
+    throw new Error("Session expired. Please log in again.");
+  }
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || `Request failed: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+// ── public API ───────────────────────────────────────────────────────────────
 export const backend = {
-  login: async (email, password) => {
-    const res = await fetch(`${BACKEND_URL}/login`, {
+  login: (email, password) =>
+    request("/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) throw new Error("Login failed");
-    return res.json();
-  },
-  signup: async (name, email, password) => {
-    const res = await fetch(`${BACKEND_URL}/signup`, {
+    }),
+
+  signup: (name, email, password) =>
+    request("/signup", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
-    });
-    if (!res.ok) throw new Error("Signup failed");
-    return res.json();
-  },
-  getRecommendations: async (userId) => {
-    const { token } = useCineStore.getState();
-    const res = await fetch(`${BACKEND_URL}/recommendations/${userId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error("Failed to fetch recommendations");
-    return res.json();
-  },
-  updatePreferences: async (userId, data) => {
-    const { token } = useCineStore.getState();
-    const res = await fetch(`${BACKEND_URL}/preferences/${userId}`, {
+    }),
+
+  getRecommendations: (userId) => request(`/recommendations/${userId}`),
+
+  updatePreferences: (userId, data) =>
+    request(`/preferences/${userId}`, {
       method: "PUT",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
       body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Failed to update preferences");
-    return res.json();
-  },
-  getWatchlist: async (userId) => {
-    const { token } = useCineStore.getState();
-    const res = await fetch(`${BACKEND_URL}/watchlist/${userId}`, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error("Failed to fetch watchlist");
-    return res.json();
-  },
-  syncWatchlist: async (userId, movieIds) => {
-    const { token } = useCineStore.getState();
-    const res = await fetch(`${BACKEND_URL}/watchlist-sync/${userId}`, {
+    }),
+
+  getWatchlist: (userId) => request(`/watchlist/${userId}`),
+
+  syncWatchlist: (userId, movieIds) =>
+    request(`/watchlist-sync/${userId}`, {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
       body: JSON.stringify({ movieIds }),
-    });
-    if (!res.ok) throw new Error("Failed to sync watchlist");
-    return res.json();
-  },
-  addToWatchHistory: async (userId, movieId) => {
-    const { token } = useCineStore.getState();
-    const res = await fetch(`${BACKEND_URL}/watched/${userId}`, {
+    }),
+
+  addToWatchHistory: (userId, movieId) =>
+    request(`/watched/${userId}`, {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
       body: JSON.stringify({ movieId }),
-    });
-    if (!res.ok) throw new Error("Failed to update watch history");
-    return res.json();
-  },
+    }),
 };

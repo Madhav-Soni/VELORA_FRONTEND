@@ -15,11 +15,11 @@ const NAV = [
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { resetPreferences } = useCineStore();
+  const { logout } = useCineStore();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
-    resetPreferences();
+    logout();
     navigate("/");
   };
 

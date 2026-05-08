@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useCineStore } from '../store/useCineStore'
 import { backend } from '../api/backend'
 
@@ -8,11 +8,16 @@ const BACKDROP = 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0P
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { setUserId, setToken } = useCineStore()
+  const { setAuth, token, isOnboarded } = useCineStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Redirect already-authenticated users
+  if (token) {
+    return <Navigate to={isOnboarded ? '/home' : '/onboarding'} replace />
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -21,11 +26,11 @@ export default function LoginPage() {
 
     try {
       const data = await backend.login(email, password)
-      setUserId(data.userId)
-      setToken(data.token)
-      navigate('/onboarding')
+      setAuth({ userId: data.userId, token: data.token, name: data.name })
+      // Guards in App.jsx redirect to /onboarding if not yet onboarded
+      navigate('/home')
     } catch (err) {
-      setError('Invalid email or password')
+      setError(err.message || 'Invalid email or password')
     } finally {
       setLoading(false)
     }
@@ -111,8 +116,15 @@ export default function LoginPage() {
             </motion.button>
           </form>
 
-          <p className="text-center text-gray-600 text-xs mt-6">
-            By continuing, you agree to our Terms & Privacy Policy
+          <p className="text-center text-gray-500 text-sm mt-6">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-white hover:underline font-semibold">
+              Sign up
+            </Link>
+          </p>
+
+          <p className="text-center text-gray-600 text-xs mt-3">
+            By continuing, you agree to our Terms &amp; Privacy Policy
           </p>
         </div>
 

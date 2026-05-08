@@ -37,7 +37,7 @@ const ActionButton = ({ label, icon, onClick, variant = "default" }) => (
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { selectedActors, selectedGenres, selectedMood, resetPreferences } = useCineStore();
+  const { selectedActors, selectedGenres, selectedMood, userName, logout } = useCineStore();
   const { watchlist } = useWatchlistStore();
 
   return (
@@ -46,7 +46,7 @@ export default function ProfilePage() {
         <div className="relative mb-8">
           <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-orange blur-2xl opacity-40 rounded-full" />
           <div className="relative w-24 h-24 rounded-[2rem] bg-gradient-to-br from-brand to-brand-orange flex items-center justify-center text-white text-4xl font-black shadow-2xl border-4 border-white/10">
-            M
+            {userName ? userName.charAt(0).toUpperCase() : 'U'}
           </div>
         </div>
         
@@ -56,7 +56,9 @@ export default function ProfilePage() {
           <span className="w-6 h-[2px] bg-brand" />
         </div>
         
-        <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase mb-2">Madhav Soni</h1>
+        <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase mb-2">
+          {userName || 'CineMatch User'}
+        </h1>
         <p className="text-sm text-white/30 font-medium">CineMatch Explorer since 2024</p>
         
         {selectedMood && (
@@ -118,7 +120,7 @@ export default function ProfilePage() {
             variant="danger" 
             icon="🚪" 
             label="Logout Session" 
-            onClick={() => { resetPreferences(); navigate("/"); }} 
+            onClick={() => { logout(); navigate('/'); }} 
           />
         </div>
       </div>
