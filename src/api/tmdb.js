@@ -1,13 +1,14 @@
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const BASE_URL = "https://api.themoviedb.org/3";
+import { BACKEND_URL } from "./backend";
+
+const BASE_URL = `${BACKEND_URL}/tmdb`;
 
 export const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 export const BACKDROP_BASE = "https://image.tmdb.org/t/p/w1280";
 
 export const fetcher = async (endpoint) => {
-  const url = `${BASE_URL}${endpoint}${endpoint.includes("?") ? "&" : "?"}api_key=${API_KEY}`;
+  const url = `${BASE_URL}${endpoint}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`TMDB Error: ${res.status}`);
+  if (!res.ok) throw new Error(`TMDB Proxy Error: ${res.status}`);
   return res.json();
 };
 

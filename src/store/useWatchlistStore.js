@@ -20,6 +20,8 @@ export const useWatchlistStore = create(
 
       isInWatchlist: (movieId) => get().watchlist.some((m) => m.id === movieId),
 
+      setWatchlist: (list) => set({ watchlist: list }),
+
       clearWatchlist: () => set({ watchlist: [] }),
     }),
     { name: "cinematch-watchlist" }

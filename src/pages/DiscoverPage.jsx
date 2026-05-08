@@ -6,7 +6,6 @@ import { useTrending, useTopRated } from "../hooks/useTMDB";
 import MovieCard from "../components/MovieCard";
 import ActorCard from "../components/ActorCard";
 import ScrollRow from "../components/ScrollRow";
-import { IMAGE_BASE } from "../api/tmdb";
 
 function useDebounced(value, delay = 400) {
   const [debounced, setDebounced] = useState(value);
@@ -74,8 +73,9 @@ export default function DiscoverPage() {
             {isFetching ? (
               <motion.div 
                 key="loader"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                animate={{ rotate: 360 }}
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1, rotate: 360 }} 
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
                 className="w-5 h-5 border-2 border-white/10 border-t-brand rounded-full flex-shrink-0" 
               />
@@ -130,7 +130,13 @@ export default function DiscoverPage() {
               </div>
             )}
 
-            {!isFetching && movieResults.length === 0 && personResults.length === 0 && (
+            {isError && (
+              <div className="flex flex-col items-center justify-center py-32 px-6 text-center">
+                <p className="text-brand/60 font-medium uppercase tracking-widest text-sm">Search failed. Please try again.</p>
+              </div>
+            )}
+
+            {!isFetching && !isError && movieResults.length === 0 && personResults.length === 0 && (
               <NoResults query={debouncedQuery} />
             )}
           </motion.div>
@@ -148,7 +154,7 @@ export default function DiscoverPage() {
               loading={trending.isLoading} 
               error={trending.isError}
             >
-              {trending.data?.results?.slice(0, 14).map((m, i) => (
+              {(trending.data?.results?.slice(0, 14) ?? []).map((m, i) => (
                 <MovieCard key={m.id} movie={m} index={i} onSelect={onMovieSelect} />
               ))}
             </ScrollRow>
@@ -159,7 +165,7 @@ export default function DiscoverPage() {
               loading={topRated.isLoading} 
               error={topRated.isError}
             >
-              {topRated.data?.results?.slice(0, 14).map((m, i) => (
+              {(topRated.data?.results?.slice(0, 14) ?? []).map((m, i) => (
                 <MovieCard key={m.id} movie={m} index={i} onSelect={onMovieSelect} />
               ))}
             </ScrollRow>

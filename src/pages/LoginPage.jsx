@@ -8,7 +8,7 @@ const BACKDROP = 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0P
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { setUserId } = useCineStore()
+  const { setUserId, setToken } = useCineStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -22,6 +22,7 @@ export default function LoginPage() {
     try {
       const data = await backend.login(email, password)
       setUserId(data.userId)
+      setToken(data.token)
       navigate('/onboarding')
     } catch (err) {
       setError('Invalid email or password')
