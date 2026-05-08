@@ -114,8 +114,7 @@ export default function Topbar({ onMovieSelect }) {
           <AnimatePresence>
             {isFetching && (
               <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                animate={{ rotate: 360 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1, rotate: 360 }} exit={{ opacity: 0 }}
                 transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
                 className="w-4 h-4 border-2 border-white/10 border-t-brand rounded-full flex-shrink-0"
               />
