@@ -4,90 +4,123 @@ import { useWatchlistStore } from "../store/useWatchlistStore";
 import { IMAGE_BASE } from "../api/tmdb";
 import { useNavigate } from "react-router-dom";
 
+const ProfileStat = ({ label, value, icon, index }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.1 }}
+    whileHover={{ y: -5, backgroundColor: "rgba(255,255,255,0.05)" }}
+    className="glass rounded-3xl p-6 text-center border border-white/5 transition-colors"
+  >
+    <div className="text-3xl mb-3">{icon}</div>
+    <div className="text-3xl font-black text-white font-display tracking-tight leading-none mb-1">{value}</div>
+    <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">{label}</div>
+  </motion.div>
+);
+
+const ActionButton = ({ label, icon, onClick, variant = "default" }) => (
+  <motion.button
+    whileHover={{ x: 5, backgroundColor: "rgba(255,255,255,0.05)" }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onClick}
+    className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all border ${
+      variant === "danger" 
+        ? "text-brand/60 border-brand/10 hover:text-brand hover:border-brand/30" 
+        : "text-white/40 border-white/5 hover:text-white hover:border-white/20"
+    }`}
+  >
+    <span className="text-xl">{icon}</span>
+    {label}
+    <span className="ml-auto opacity-20">→</span>
+  </motion.button>
+);
+
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { selectedActors, selectedGenres, selectedMood, resetPreferences } = useCineStore();
   const { watchlist } = useWatchlistStore();
 
-  const stats = [
-    { label: "Watchlist", value: watchlist.length, icon: "🔖" },
-    { label: "Fav Actors", value: selectedActors.length, icon: "🎭" },
-    { label: "Genres", value: selectedGenres.length, icon: "🎬" },
-  ];
-
   return (
-    <div className="px-6 sm:px-8 py-8 max-w-xl">
-      <p className="text-[10px] text-[#E50914] font-bold tracking-[0.3em] uppercase mb-1">You</p>
-      <h1 className="text-3xl font-black text-white mb-8" style={{ fontFamily: "'Bebas Neue', cursive" }}>Profile</h1>
-
-      {/* Avatar + name */}
-      <div className="flex items-center gap-5 mb-10">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#E50914] to-[#ff6b35] flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-[#E50914]/20">
-          U
+    <div className="px-6 sm:px-12 py-10 max-w-2xl mx-auto pb-32">
+      <div className="flex flex-col items-center text-center mb-16">
+        <div className="relative mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-orange blur-2xl opacity-40 rounded-full" />
+          <div className="relative w-24 h-24 rounded-[2rem] bg-gradient-to-br from-brand to-brand-orange flex items-center justify-center text-white text-4xl font-black shadow-2xl border-4 border-white/10">
+            M
+          </div>
         </div>
-        <div>
-          <h2 className="text-lg font-bold text-white">Movie Fan</h2>
-          <p className="text-sm text-[#555]">CineMatch member</p>
-          {selectedMood && (
-            <p className="text-xs text-[#F5C518] mt-1">Mood: {selectedMood.label || selectedMood.id}</p>
-          )}
+        
+        <div className="flex items-center gap-3 mb-2">
+          <span className="w-6 h-[2px] bg-brand" />
+          <p className="text-brand text-[10px] font-black tracking-[0.4em] uppercase">Premium Member</p>
+          <span className="w-6 h-[2px] bg-brand" />
         </div>
+        
+        <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase mb-2">Madhav Soni</h1>
+        <p className="text-sm text-white/30 font-medium">CineMatch Explorer since 2024</p>
+        
+        {selectedMood && (
+          <div className="mt-4 px-4 py-1.5 glass rounded-full border-gold/30 text-gold text-xs font-black uppercase tracking-widest">
+            Vibe: {selectedMood.label}
+          </div>
+        )}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-10">
-        {stats.map(({ label, value, icon }) => (
-          <motion.div key={label} whileHover={{ y: -3 }} className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-2xl p-4 text-center">
-            <p className="text-2xl mb-1">{icon}</p>
-            <p className="text-2xl font-black text-white" style={{ fontFamily: "'Bebas Neue', cursive" }}>{value}</p>
-            <p className="text-[10px] text-[#444] uppercase tracking-wider">{label}</p>
-          </motion.div>
-        ))}
+      {/* Stats Grid */}
+      <div className="grid grid-cols-3 gap-4 mb-16">
+        <ProfileStat index={0} icon="🔖" value={watchlist.length} label="Saved" />
+        <ProfileStat index={1} icon="🎭" value={selectedActors.length} label="Actors" />
+        <ProfileStat index={2} icon="🎬" value={selectedGenres.length} label="Genres" />
       </div>
 
-      {/* Actors */}
-      {selectedActors.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xs font-bold text-[#333] uppercase tracking-widest mb-3">Favourite Actors</h3>
-          <div className="flex flex-wrap gap-2">
-            {selectedActors.map((actor) => (
-              <div key={actor.id} className="flex items-center gap-2 pl-1 pr-3 py-1 bg-[#111] border border-[#1a1a1a] rounded-full">
-                <div className="w-6 h-6 rounded-full overflow-hidden bg-[#1a1a1a]">
-                  <img src={actor.profile_path ? `${IMAGE_BASE}${actor.profile_path}` : "https://via.placeholder.com/24x24/1a1a1a/444?text=?"} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://via.placeholder.com/24x24/1a1a1a/444?text=?"; }} />
+      {/* Interests Summary */}
+      <div className="space-y-12 mb-16">
+        {selectedActors.length > 0 && (
+          <div>
+            <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6 px-2">Followed Talent</h3>
+            <div className="flex flex-wrap gap-3">
+              {selectedActors.map((actor) => (
+                <div key={actor.id} className="flex items-center gap-2 pl-1 pr-4 py-1 glass rounded-full border border-white/5">
+                  <div className="w-7 h-7 rounded-full overflow-hidden border border-white/10">
+                    <img 
+                      src={actor.profile_path ? `${IMAGE_BASE}${actor.profile_path}` : "https://via.placeholder.com/32x32/111/444?text=?"} 
+                      className="w-full h-full object-cover grayscale" 
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold text-white/40">{actor.name}</span>
                 </div>
-                <span className="text-xs text-[#777]">{actor.name}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Genres */}
-      {selectedGenres.length > 0 && (
-        <div className="mb-10">
-          <h3 className="text-xs font-bold text-[#333] uppercase tracking-widest mb-3">Favourite Genres</h3>
-          <div className="flex flex-wrap gap-2">
-            {selectedGenres.map((g) => (
-              <span key={g.id} className="text-xs text-[#777] bg-[#111] border border-[#1a1a1a] px-3 py-1 rounded-full">{g.name}</span>
-            ))}
+        {selectedGenres.length > 0 && (
+          <div>
+            <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6 px-2">Preferred Genres</h3>
+            <div className="flex flex-wrap gap-3">
+              {selectedGenres.map((g) => (
+                <span key={g.id} className="text-[11px] font-black uppercase tracking-widest text-white/30 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-xl">
+                  {g.name}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Actions */}
-      <div className="flex flex-col gap-2 border-t border-[#111] pt-6">
-        <button onClick={() => navigate("/preferences")} className="w-full text-left px-4 py-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] text-sm text-[#777] hover:text-white hover:border-[#2a2a2a] transition-all">
-          ⚙️ Edit Preferences
-        </button>
-        <button onClick={() => navigate("/watchlist")} className="w-full text-left px-4 py-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] text-sm text-[#777] hover:text-white hover:border-[#2a2a2a] transition-all">
-          🔖 View Watchlist
-        </button>
-        <button onClick={() => navigate("/onboarding")} className="w-full text-left px-4 py-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] text-sm text-[#777] hover:text-white hover:border-[#2a2a2a] transition-all">
-          🎬 Redo Onboarding
-        </button>
-        <button onClick={() => { resetPreferences(); navigate("/"); }} className="w-full text-left px-4 py-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] text-sm text-[#E50914]/50 hover:text-[#E50914] hover:border-[#E50914]/20 transition-all mt-2">
-          🚪 Sign Out
-        </button>
+      {/* Action List */}
+      <div className="space-y-3 pt-12 border-t border-white/5">
+        <ActionButton icon="⚙️" label="Edit AI Preferences" onClick={() => navigate("/preferences")} />
+        <ActionButton icon="🔖" label="Manage Watchlist" onClick={() => navigate("/watchlist")} />
+        <ActionButton icon="🎬" label="Reset Onboarding" onClick={() => navigate("/onboarding")} />
+        <div className="pt-4">
+          <ActionButton 
+            variant="danger" 
+            icon="🚪" 
+            label="Logout Session" 
+            onClick={() => { resetPreferences(); navigate("/"); }} 
+          />
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCineStore } from "../store/useCineStore";
+import { backend } from "../api/backend";
 import ActorPicker from "../components/ActorPicker";
 
 const GENRES = [
@@ -16,10 +17,11 @@ const GENRES = [
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const { setSelectedActors, setSelectedGenres, setIsOnboarded } = useCineStore();
+  const { userId, setSelectedActors, setSelectedGenres, setIsOnboarded } = useCineStore();
   const [step, setStep] = useState(0);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const toggleGenre = (genre) => {
     setGenres((prev) =>
@@ -29,11 +31,29 @@ export default function OnboardingPage() {
     );
   };
 
-  const handleFinish = () => {
-    setSelectedActors(actors);
-    setSelectedGenres(genres);
-    setIsOnboarded(true);
-    navigate("/home");
+  const handleFinish = async () => {
+    setLoading(true);
+    try {
+      if (userId) {
+        await backend.updatePreferences(userId, {
+          favoriteActors: actors.map(a => a.id),
+          favoriteGenres: genres.map(g => g.name)
+        });
+      }
+      setSelectedActors(actors);
+      setSelectedGenres(genres);
+      setIsOnboarded(true);
+      navigate("/home");
+    } catch (error) {
+      console.error("Failed to save preferences:", error);
+      // Even if it fails, maybe proceed or show an error. We'll proceed for now.
+      setSelectedActors(actors);
+      setSelectedGenres(genres);
+      setIsOnboarded(true);
+      navigate("/home");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const steps = [
@@ -160,14 +180,14 @@ export default function OnboardingPage() {
               whileHover={{ scale: current.canNext ? 1.02 : 1 }}
               whileTap={{ scale: current.canNext ? 0.98 : 1 }}
               onClick={() => current.canNext && handleFinish()}
-              disabled={!current.canNext}
+              disabled={!current.canNext || loading}
               className={`flex-1 py-3 rounded-xl text-sm font-semibold transition-all ${
                 current.canNext
                   ? "bg-[#E50914] hover:bg-[#c40812] text-white shadow-lg shadow-[#E50914]/20"
                   : "bg-[#1a1a1a] text-[#444] cursor-not-allowed"
               }`}
             >
-              Let's Go 🎬
+              {loading ? "Saving..." : "Let's Go 🎬"}
             </motion.button>
           )}
         </div>

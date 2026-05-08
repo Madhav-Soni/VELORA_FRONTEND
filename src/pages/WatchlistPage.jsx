@@ -1,107 +1,177 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { useWatchlistStore } from "../store/useWatchlistStore";
 import { IMAGE_BASE } from "../api/tmdb";
 
 const PLACEHOLDER = "https://via.placeholder.com/200x300/111/333?text=No+Image";
 
+const EmptyState = () => {
+  const navigate = useNavigate();
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center justify-center py-32 px-6"
+    >
+      <div className="w-24 h-24 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-8">
+        <span className="text-4xl">🔖</span>
+      </div>
+      <h2 className="text-2xl font-black text-white mb-3 font-display tracking-wide uppercase">Your list is empty</h2>
+      <p className="text-white/30 text-sm mb-10 max-w-[280px] text-center leading-relaxed">
+        Movies you add to your watchlist will appear here for easy access.
+      </p>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate("/discover")}
+        className="px-10 py-4 bg-brand text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-2xl shadow-2xl shadow-brand/20"
+      >
+        Discover Movies
+      </motion.button>
+    </motion.div>
+  );
+};
+
 export default function WatchlistPage() {
+  const navigate = useNavigate();
   const { onMovieSelect } = useOutletContext() ?? {};
   const { watchlist, removeFromWatchlist, clearWatchlist } = useWatchlistStore();
   const [confirmClear, setConfirmClear] = useState(false);
 
   return (
-    <div className="px-6 sm:px-8 py-8">
+    <div className="px-6 sm:px-12 py-10 max-w-[1600px] mx-auto">
       {/* Header */}
-      <div className="flex items-end justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
         <div>
-          <p className="text-[10px] text-[#E50914] font-bold tracking-[0.3em] uppercase mb-1">Your Collection</p>
-          <h1 className="text-3xl font-black text-white" style={{ fontFamily: "'Bebas Neue', cursive" }}>
-            Watchlist
+          <div className="flex items-center gap-3 mb-2">
+            <span className="w-6 h-[2px] bg-brand" />
+            <p className="text-brand text-[10px] font-black tracking-[0.4em] uppercase">Personal Vault</p>
+          </div>
+          <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase">
+            My Watchlist
           </h1>
-          <p className="text-sm text-[#555] mt-1">{watchlist.length} {watchlist.length === 1 ? "movie" : "movies"} saved</p>
+          <p className="text-[11px] font-bold text-white/20 uppercase tracking-widest mt-2">
+            {watchlist.length} {watchlist.length === 1 ? "Title" : "Titles"} Saved
+          </p>
         </div>
+
         {watchlist.length > 0 && (
-          <div>
-            {confirmClear ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[#888]">Clear all?</span>
-                <button onClick={() => { clearWatchlist(); setConfirmClear(false); }} className="text-xs text-[#E50914] font-semibold hover:underline">Yes</button>
-                <button onClick={() => setConfirmClear(false)} className="text-xs text-[#555] hover:text-white">Cancel</button>
-              </div>
-            ) : (
-              <button onClick={() => setConfirmClear(true)} className="text-xs text-[#444] hover:text-[#888] transition-colors">Clear all</button>
-            )}
+          <div className="flex items-center">
+            <AnimatePresence mode="wait">
+              {confirmClear ? (
+                <motion.div 
+                  key="confirm"
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex items-center gap-4 bg-brand/10 border border-brand/20 px-4 py-2 rounded-xl"
+                >
+                  <span className="text-[10px] font-black text-brand uppercase tracking-wider">Are you sure?</span>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => { clearWatchlist(); setConfirmClear(false); }}
+                      className="text-[10px] font-black text-white uppercase tracking-widest hover:underline"
+                    >
+                      Yes, Clear
+                    </button>
+                    <button 
+                      onClick={() => setConfirmClear(false)}
+                      className="text-[10px] font-black text-white/30 uppercase tracking-widest hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.button 
+                  key="trigger"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setConfirmClear(true)}
+                  className="px-5 py-2.5 glass text-[10px] font-black text-white/20 hover:text-brand hover:border-brand/30 uppercase tracking-[0.2em] rounded-xl transition-all"
+                >
+                  Clear Collection
+                </motion.button>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>
 
-      {/* Empty state */}
-      {watchlist.length === 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-24">
-          <div className="text-5xl mb-4">🎬</div>
-          <h2 className="text-lg font-semibold text-[#444] mb-2">No movies saved yet</h2>
-          <p className="text-sm text-[#333]">Browse and add movies to your watchlist to see them here.</p>
-        </motion.div>
-      )}
-
-      {/* Grid */}
-      <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        <AnimatePresence>
-          {watchlist.map((movie, i) => {
-            const title = movie.title || movie.name || "Untitled";
-            const rating = movie.vote_average ? movie.vote_average.toFixed(1) : null;
-            const year = movie.release_date ? new Date(movie.release_date).getFullYear() : null;
-            return (
-              <motion.div
-                key={movie.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.2 } }}
-                transition={{ duration: 0.3, delay: i * 0.03 }}
-                className="group cursor-pointer"
-                onClick={() => onMovieSelect?.(movie.id)}
-              >
-                <div className="relative rounded-2xl overflow-hidden border border-[#1a1a1a] bg-[#111] shadow-lg group-hover:border-[#E50914]/30 group-hover:shadow-[0_8px_24px_rgba(229,9,20,0.1)] transition-all duration-300">
-                  <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.25 }}>
+      {/* Content */}
+      {watchlist.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <motion.div 
+          layout 
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-5 gap-y-10"
+        >
+          <AnimatePresence mode="popLayout">
+            {watchlist.map((movie, i) => {
+              const title = movie.title || movie.name || "Untitled";
+              const rating = movie.vote_average ? movie.vote_average.toFixed(1) : null;
+              
+              return (
+                <motion.div
+                  key={movie.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  className="group"
+                >
+                  <div 
+                    onClick={() => onMovieSelect?.(movie.id)}
+                    className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden border border-white/5 bg-white/[0.02] shadow-2xl group-hover:border-brand/40 transition-all duration-500 cursor-pointer"
+                  >
                     <img
                       src={movie.poster_path ? `${IMAGE_BASE}${movie.poster_path}` : PLACEHOLDER}
                       alt={title}
-                      className="w-full aspect-[2/3] object-cover"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       onError={(e) => { e.target.src = PLACEHOLDER; }}
                       loading="lazy"
                     />
-                  </motion.div>
 
-                  {rating && (
-                    <div className="absolute top-2 left-2 bg-black/75 text-[#F5C518] text-[10px] font-bold px-1.5 py-0.5 rounded-lg backdrop-blur-sm">★ {rating}</div>
-                  )}
+                    {/* Rating */}
+                    {rating && (
+                      <div className="absolute top-3 left-3 glass text-gold text-[10px] font-black px-2 py-1 rounded-lg">
+                        ★ {rating}
+                      </div>
+                    )}
 
-                  {/* Remove button */}
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.stopPropagation(); removeFromWatchlist(movie.id); }}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/70 backdrop-blur-sm flex items-center justify-center text-[#888] hover:text-[#E50914] opacity-0 group-hover:opacity-100 transition-all duration-200 text-sm font-bold"
-                  >
-                    ×
-                  </motion.button>
+                    {/* Remove button */}
+                    <motion.button
+                      whileHover={{ scale: 1.1, backgroundColor: "#E50914" }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => { e.stopPropagation(); removeFromWatchlist(movie.id); }}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full glass flex items-center justify-center text-white/50 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="14" height="14">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </motion.button>
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="text-white text-xs font-semibold line-clamp-2">{title}</p>
-                    {year && <p className="text-[#888] text-[10px] mt-0.5">{year}</p>}
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
-                </div>
-                <p className="mt-1.5 text-xs text-[#555] truncate px-0.5 group-hover:text-[#aaa] transition-colors">{title}</p>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </motion.div>
+                  
+                  <div className="mt-4 px-1">
+                    <p className="text-[13px] font-bold text-white/40 group-hover:text-white transition-colors truncate">
+                      {title}
+                    </p>
+                    <p className="text-[10px] font-black text-brand uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      View Details
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   );
 }

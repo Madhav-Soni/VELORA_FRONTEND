@@ -8,11 +8,13 @@ export const useCineStore = create(
       selectedGenres: [],
       selectedMood: null,
       isOnboarded: false,
+      userId: null,
 
       setSelectedActors: (actors) => set({ selectedActors: actors }),
       setSelectedGenres: (genres) => set({ selectedGenres: genres }),
       setSelectedMood: (mood) => set({ selectedMood: mood }),
       setIsOnboarded: (val) => set({ isOnboarded: val }),
+      setUserId: (id) => set({ userId: id }),
 
       toggleGenre: (genre) =>
         set((state) => ({
@@ -27,6 +29,7 @@ export const useCineStore = create(
           selectedGenres: [],
           selectedMood: null,
           isOnboarded: false,
+          userId: null,
         }),
     }),
     { name: "cinematch-prefs" }

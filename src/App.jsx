@@ -42,6 +42,8 @@ export default function App() {
           >
             <Route path="/home" element={<HomePage />} />
             <Route path="/discover" element={<DiscoverPage />} />
+            <Route path="/trending" element={<div className="p-10 text-white text-2xl font-bold">Trending Coming Soon</div>} />
+            <Route path="/favorites" element={<div className="p-10 text-white text-2xl font-bold">Favorites Coming Soon</div>} />
             <Route path="/watchlist" element={<WatchlistPage />} />
             <Route path="/preferences" element={<PreferencesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
