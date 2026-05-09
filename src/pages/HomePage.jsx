@@ -2,7 +2,7 @@ import { useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTrending, usePopularActors, useTopRated, useNowPlaying, useMoviesByActor } from "../hooks/useTMDB";
 import { useRecommendations } from "../hooks/useBackend";
-import { useCineStore } from "../store/useCineStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 import ScrollRow from "../components/ScrollRow";
 import MovieCard from "../components/MovieCard";
 import MovieRow from "../components/MovieRow";
@@ -11,7 +11,7 @@ import { BACKDROP_BASE } from "../api/tmdb";
 const BACKDROP_PLACEHOLDER = "https://via.placeholder.com/1280x720/080808/080808";
 
 function HeroBanner({ movie, onSelect }) {
-  const { addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useCineStore();
+  const { addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useVeloraStore();
   if (!movie) return null;
 
   const inWatchlist = isInWatchlist(movie.id);
@@ -114,7 +114,7 @@ function ActorMovieSection({ actor, onSelect }) {
 
 export default function HomePage() {
   const { onMovieSelect } = useOutletContext() ?? {};
-  const { selectedActors, userId } = useCineStore();
+  const { selectedActors, userId } = useVeloraStore();
 
   const recommendations = useRecommendations(userId);
   const trending = useTrending();

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useSearchMulti } from "../../hooks/useMovieQueries";
 import { IMAGE_BASE } from "../../api/tmdb";
-import { useCineStore } from "../../store/useCineStore";
+import { useVeloraStore } from "../../store/useVeloraStore";
 
 const MOODS = ["All", "Action", "Comedy", "Horror", "Romance", "Sci-Fi", "Thriller"];
 const PLACEHOLDER_IMG = "https://via.placeholder.com/40x60/1a1a1a/444?text=?";
@@ -42,7 +42,7 @@ export default function Topbar({ onMovieSelect }) {
   
   const searchRef = useRef(null);
   const profileRef = useRef(null);
-  const { resetPreferences } = useCineStore();
+  const { resetPreferences } = useVeloraStore();
 
   const debouncedQuery = useDebounce(input, 350);
   const { data, isFetching } = useSearchMulti(debouncedQuery);

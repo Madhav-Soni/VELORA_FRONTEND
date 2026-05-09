@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCineStore } from "../store/useCineStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 import ActorPicker from "../components/ActorPicker";
 import { IMAGE_BASE } from "../api/tmdb";
 import { backend } from "../api/backend";
@@ -32,7 +32,7 @@ export default function PreferencesPage() {
     selectedActors, setSelectedActors,
     selectedGenres, toggleGenre,
     selectedMood, setSelectedMood,
-  } = useCineStore();
+  } = useVeloraStore();
 
   const [showActorPicker, setShowActorPicker] = useState(false);
   const [localActors, setLocalActors] = useState(selectedActors);
@@ -68,7 +68,7 @@ export default function PreferencesPage() {
     toggleGenre(genre);
     if (userId) {
       // Get fresh state after toggle
-      const { selectedGenres: nextGenres } = useCineStore.getState();
+      const { selectedGenres: nextGenres } = useVeloraStore.getState();
       try {
         await backend.updatePreferences(userId, {
           favoriteActors: selectedActors.map(a => a.id),

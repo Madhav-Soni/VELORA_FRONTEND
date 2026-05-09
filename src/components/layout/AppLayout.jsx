@@ -3,13 +3,13 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MovieModal from "../MovieModal";
-import { useCineStore } from "../../store/useCineStore";
+import { useVeloraStore } from "../../store/useVeloraStore";
 import { backend } from "../../api/backend";
 import { tmdbExt } from "../../api/tmdb";
 
 export default function AppLayout() {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
-  const { userId, watchlist, setWatchlist } = useCineStore();
+  const { userId, watchlist, setWatchlist } = useVeloraStore();
 
   // Prevents double-hydration on re-renders
   const hydratedRef = useRef(false);
@@ -34,7 +34,7 @@ export default function AppLayout() {
     hydratedRef.current = true;
 
     // Load Preferences
-    const { syncPreferencesWithBackend } = useCineStore.getState();
+    const { syncPreferencesWithBackend } = useVeloraStore.getState();
     syncPreferencesWithBackend().catch(console.error);
 
     // Load Watchlist

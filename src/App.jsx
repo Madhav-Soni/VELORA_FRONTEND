@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Component } from "react";
-import { useCineStore } from "./store/useCineStore";
+import { useVeloraStore } from "./store/useVeloraStore";
 
 import AppLayout from "./components/layout/AppLayout";
 import LoginPage from "./pages/LoginPage";
@@ -53,21 +53,21 @@ class ErrorBoundary extends Component {
 
 /** Require auth — redirect to login if no token */
 function RequireAuth({ children }) {
-  const { token } = useCineStore();
+  const { token } = useVeloraStore();
   if (!token) return <Navigate to="/" replace />;
   return children;
 }
 
 /** Require onboarding complete — redirect to onboarding if not done yet */
 function RequireOnboarding({ children }) {
-  const { isOnboarded } = useCineStore();
+  const { isOnboarded } = useVeloraStore();
   if (!isOnboarded) return <Navigate to="/onboarding" replace />;
   return children;
 }
 
 /** Prevent onboarded+authed users from revisiting onboarding */
 function OnboardingGuard({ children }) {
-  const { token, isOnboarded } = useCineStore();
+  const { token, isOnboarded } = useVeloraStore();
   if (!token) return <Navigate to="/" replace />;
   if (isOnboarded) return <Navigate to="/home" replace />;
   return children;

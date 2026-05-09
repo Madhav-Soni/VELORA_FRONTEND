@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCineStore } from "../store/useCineStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 
 export const BACKEND_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
@@ -14,7 +14,7 @@ const api = axios.create({
 
 // Request interceptor: attach JWT token
 api.interceptors.request.use((config) => {
-  const { token } = useCineStore.getState();
+  const { token } = useVeloraStore.getState();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -26,7 +26,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      useCineStore.getState().logout();
+      useVeloraStore.getState().logout();
       // Optionally redirect or show message
     }
     return Promise.reject(error);
@@ -56,12 +56,6 @@ export const backend = {
   // Watchlist
   getWatchlist: (userId) =>
     api.get(`/watchlist/${userId}`).then((res) => res.data),
-
-  addToWatchlist: (userId, movie) =>
-    api.post(`/watchlist/${userId}`, { movie }).then((res) => res.data),
-
-  removeFromWatchlist: (userId, movieId) =>
-    api.delete(`/watchlist/${userId}/${movieId}`).then((res) => res.data),
 
   syncWatchlist: (userId, movieIds) =>
     api.post(`/watchlist-sync/${userId}`, { movieIds }).then((res) => res.data),

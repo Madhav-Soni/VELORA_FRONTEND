@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { backend } from "../api/backend";
 
-export const useCineStore = create(
+export const useVeloraStore = create(
   persist(
     (set, get) => ({
       // ── auth ─────────────────────────────────────────────────────────────
@@ -72,7 +72,7 @@ export const useCineStore = create(
 
       // ── async sync actions ───────────────────────────────────────────────
       syncWatchlistWithBackend: async () => {
-        const { userId, watchlist } = get();
+        const { userId } = get();
         if (!userId) return;
         try {
           const remoteList = await backend.getWatchlist(userId);
@@ -88,9 +88,10 @@ export const useCineStore = create(
         get().addToWatchlist(movie); // Optimistic update
         if (userId) {
           try {
-            await backend.addToWatchlist(userId, movie);
+            const updatedIds = get().watchlist.map((m) => m.id);
+            await backend.syncWatchlist(userId, updatedIds);
           } catch (err) {
-            console.error("Backend watchlist add failed:", err);
+            console.error("Backend watchlist sync failed:", err);
           }
         }
       },
@@ -100,9 +101,10 @@ export const useCineStore = create(
         get().removeFromWatchlist(movieId); // Optimistic update
         if (userId) {
           try {
-            await backend.removeFromWatchlist(userId, movieId);
+            const updatedIds = get().watchlist.map((m) => m.id);
+            await backend.syncWatchlist(userId, updatedIds);
           } catch (err) {
-            console.error("Backend watchlist remove failed:", err);
+            console.error("Backend watchlist sync failed:", err);
           }
         }
       },
@@ -139,11 +141,11 @@ export const useCineStore = create(
           watchlist: [],
         }),
     }),
-    { name: "cinematch-prefs" }
+    { name: "velora-prefs" }
   )
 );
 
-// ── Shim: re-export as useWatchlistStore so existing imports keep working ─────
-// This lets MovieCard, MovieModal, WatchlistPage, etc. compile without changes
-// while we migrate them to useCineStore over time.
-export const useWatchlistStore = useCineStore;
+// ── Shim: re-export as useVeloraStore and useVeloraStore so existing imports keep working ─────
+// This ensures a smooth transition while we update other files to use useVeloraStore.
+export const useVeloraStore = useVeloraStore;
+export const useVeloraStore = useVeloraStore;

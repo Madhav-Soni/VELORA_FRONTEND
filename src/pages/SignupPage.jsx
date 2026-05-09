@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
-import { useCineStore } from '../store/useCineStore'
+import { useVeloraStore } from '../store/useVeloraStore'
 import { backend } from '../api/backend'
 
 const BACKDROP = 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'
 
 export default function SignupPage() {
   const navigate = useNavigate()
-  const { setAuth } = useCineStore()
+  const { setAuth } = useVeloraStore()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -59,9 +59,9 @@ export default function SignupPage() {
         className="absolute top-8 left-8 flex items-center gap-3"
       >
         <div className="w-10 h-10 bg-brand-red rounded-xl flex items-center justify-center shadow-lg shadow-brand-red/30">
-          <span className="font-display text-white text-lg">CM</span>
+          <span className="font-display text-white text-lg">V</span>
         </div>
-        <span className="font-display text-3xl tracking-widest text-white">CINEMATCH</span>
+        <span className="font-display text-3xl tracking-widest text-white">VELORA</span>
       </motion.div>
 
       {/* Card */}
@@ -74,7 +74,7 @@ export default function SignupPage() {
         <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
           <div className="mb-8">
             <h1 className="font-display text-4xl text-white tracking-wide mb-2">Create account</h1>
-            <p className="text-gray-400 text-sm">Join CineMatch and discover movies tailored to you.</p>
+            <p className="text-gray-400 text-sm">Join Velora and discover entertainment tailored to your vibe.</p>
           </div>
 
           <form onSubmit={handleSignup} className="space-y-4" id="signup-form">

@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { useMovieDetails } from "../hooks/useMovieQueries";
 import { IMAGE_BASE, BACKDROP_BASE } from "../api/tmdb";
-import { useWatchlistStore } from "../store/useWatchlistStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 import { backend } from "../api/backend";
 
 const PLACEHOLDER = "https://via.placeholder.com/300x450/111/333?text=No+Image";
@@ -17,7 +17,7 @@ const MetaBadge = ({ children, icon, color = "text-white/40" }) => (
 
 export default function MovieModal({ movieId, onClose }) {
   const { data: movie, isLoading } = useMovieDetails(movieId);
-  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useWatchlistStore();
+  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useVeloraStore();
   const inWatchlist = movie ? isInWatchlist(movie.id) : false;
 
   useEffect(() => {

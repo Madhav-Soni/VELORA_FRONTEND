@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCineStore } from "../store/useCineStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 import { backend } from "../api/backend";
 import ActorPicker from "../components/ActorPicker";
 
@@ -17,7 +17,7 @@ const GENRES = [
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const { userId, setSelectedActors, setSelectedGenres, setIsOnboarded } = useCineStore();
+  const { userId, setSelectedActors, setSelectedGenres, setIsOnboarded } = useVeloraStore();
   const [step, setStep] = useState(0);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -115,7 +115,7 @@ export default function OnboardingPage() {
             WebkitTextFillColor: "transparent",
           }}
         >
-          CINEMATCH
+          VELORA
         </p>
 
         {/* Progress */}

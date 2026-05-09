@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { useCineStore } from "../store/useCineStore";
-import { useWatchlistStore } from "../store/useWatchlistStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 import { IMAGE_BASE } from "../api/tmdb";
 import { useNavigate } from "react-router-dom";
 
@@ -37,8 +36,8 @@ const ActionButton = ({ label, icon, onClick, variant = "default" }) => (
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { selectedActors, selectedGenres, selectedMood, userName, logout } = useCineStore();
-  const { watchlist } = useWatchlistStore();
+  const { selectedActors, selectedGenres, selectedMood, userName, logout } = useVeloraStore();
+  const { watchlist } = useVeloraStore();
 
   return (
     <div className="px-6 sm:px-12 py-10 max-w-2xl mx-auto pb-32">
@@ -57,9 +56,9 @@ export default function ProfilePage() {
         </div>
         
         <h1 className="text-4xl font-black text-white font-display tracking-tight uppercase mb-2">
-          {userName || 'CineMatch User'}
+          {userName || 'Velora User'}
         </h1>
-        <p className="text-sm text-white/30 font-medium">CineMatch Explorer since 2024</p>
+        <p className="text-sm text-white/30 font-medium">Velora Connoisseur since 2024</p>
         
         {selectedMood && (
           <div className="mt-4 px-4 py-1.5 glass rounded-full border-gold/30 text-gold text-xs font-black uppercase tracking-widest">

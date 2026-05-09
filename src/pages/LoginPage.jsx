@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Navigate, Link } from 'react-router-dom'
-import { useCineStore } from '../store/useCineStore'
+import { useVeloraStore } from '../store/useVeloraStore'
 import { backend } from '../api/backend'
 
 const BACKDROP = 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { setAuth, token, isOnboarded } = useCineStore()
+  const { setAuth, token, isOnboarded } = useVeloraStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -29,13 +29,13 @@ export default function LoginPage() {
       setAuth({ userId: data.userId, token: data.token, name: data.name })
       
       // Sync state from backend
-      const { syncPreferencesWithBackend, syncWatchlistWithBackend } = useCineStore.getState();
+      const { syncPreferencesWithBackend, syncWatchlistWithBackend } = useVeloraStore.getState();
       await Promise.all([
         syncPreferencesWithBackend(),
         syncWatchlistWithBackend()
       ]);
 
-      const onboarded = useCineStore.getState().isOnboarded
+      const onboarded = useVeloraStore.getState().isOnboarded
       navigate(onboarded ? '/home' : '/onboarding')
     } catch (err) {
       setError(err.message || 'Invalid email or password')
@@ -64,9 +64,9 @@ export default function LoginPage() {
         className="absolute top-8 left-8 flex items-center gap-3"
       >
         <div className="w-10 h-10 bg-brand-red rounded-xl flex items-center justify-center shadow-lg shadow-brand-red/30">
-          <span className="font-display text-white text-lg">CM</span>
+          <span className="font-display text-white text-lg">V</span>
         </div>
-        <span className="font-display text-3xl tracking-widest text-white">CINEMATCH</span>
+        <span className="font-display text-3xl tracking-widest text-white">VELORA</span>
       </motion.div>
 
       {/* Card */}
@@ -79,7 +79,7 @@ export default function LoginPage() {
         <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
           <div className="mb-8">
             <h1 className="font-display text-4xl text-white tracking-wide mb-2">Welcome back</h1>
-            <p className="text-gray-400 text-sm">Your personalized cinema, curated for you.</p>
+            <p className="text-gray-400 text-sm">Discover what fits your taste.</p>
           </div>
 
           {/* Buttons */}

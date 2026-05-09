@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { useWatchlistStore } from "../store/useWatchlistStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 import { IMAGE_BASE } from "../api/tmdb";
 
 const PLACEHOLDER = "https://via.placeholder.com/200x300/111/333?text=No+Image";
@@ -36,7 +36,7 @@ const EmptyState = () => {
 export default function WatchlistPage() {
   const navigate = useNavigate();
   const { onMovieSelect } = useOutletContext() ?? {};
-  const { watchlist, removeFromWatchlist, clearWatchlist } = useWatchlistStore();
+  const { watchlist, removeFromWatchlist, clearWatchlist } = useVeloraStore();
   const [confirmClear, setConfirmClear] = useState(false);
 
   return (

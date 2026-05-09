@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { IMAGE_BASE } from "../api/tmdb";
-import { useWatchlistStore } from "../store/useWatchlistStore";
+import { useVeloraStore } from "../store/useVeloraStore";
 
 const PLACEHOLDER = "https://via.placeholder.com/200x300/111/333?text=No+Image";
 
 export default function MovieCard({ movie, index = 0, onSelect }) {
-  const { addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useWatchlistStore();
+  const { addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useVeloraStore();
   const [imgLoaded, setImgLoaded] = useState(false);
   const inWatchlist = isInWatchlist(movie.id);
 

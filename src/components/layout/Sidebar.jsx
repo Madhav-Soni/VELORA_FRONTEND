@@ -1,7 +1,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { useCineStore } from "../../store/useCineStore";
+import { useVeloraStore } from "../../store/useVeloraStore";
 
 const NAV = [
   { to: "/home", label: "Home", icon: <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg> },
@@ -15,7 +15,7 @@ const NAV = [
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useCineStore();
+  const { logout } = useVeloraStore();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
@@ -56,10 +56,10 @@ export default function Sidebar() {
 
             {/* Logo */}
             <div className="px-6 pt-10 pb-12">
-              <span className="text-2xl font-black font-display text-gradient-red tracking-wide block">
-                CINEMATCH
+              <span className="text-2xl font-black font-display text-gradient-red tracking-wider block">
+                VELORA
               </span>
-              <p className="text-[9px] font-black text-white/20 tracking-[0.3em] uppercase mt-1">Your taste. Refined.</p>
+              <p className="text-[9px] font-black text-white/20 tracking-[0.3em] uppercase mt-1">Curated for your vibe</p>
             </div>
 
             {/* Nav */}
