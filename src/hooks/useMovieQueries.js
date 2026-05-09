@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import { tmdbExt } from "../api/tmdb";
 
 export const useMovieDetails = (id) =>
@@ -7,6 +7,15 @@ export const useMovieDetails = (id) =>
     queryFn: () => tmdbExt.getMovieDetails(id),
     enabled: !!id,
     staleTime: 1000 * 60 * 30,
+  });
+
+export const useWatchlistDetails = (movies) =>
+  useQueries({
+    queries: movies.map((m) => ({
+      queryKey: ["movieDetails", m.id],
+      queryFn: () => tmdbExt.getMovieDetails(m.id),
+      staleTime: 1000 * 60 * 30,
+    })),
   });
 
 export const useSearchMulti = (query) =>

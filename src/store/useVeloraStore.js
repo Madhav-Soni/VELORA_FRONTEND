@@ -109,6 +109,18 @@ export const useVeloraStore = create(
         }
       },
 
+      clearWatchlistAsync: async () => {
+        const { userId } = get();
+        get().clearWatchlist(); // Optimistic update
+        if (userId) {
+          try {
+            await backend.syncWatchlist(userId, []);
+          } catch (err) {
+            console.error("Backend watchlist clear failed:", err);
+          }
+        }
+      },
+
       syncPreferencesWithBackend: async () => {
         const { userId } = get();
         if (!userId) return;

@@ -40,17 +40,14 @@ export default function AppLayout() {
     // Load Watchlist
     backend
       .getWatchlist(userId)
-      .then(async (ids) => {
+      .then((ids) => {
         if (!ids || ids.length === 0) {
           skipSyncRef.current = false;
           return;
         }
-        // If the backend returns full objects, we use them. If IDs, we hydrate.
-        // Assuming IDs based on the .map(id => ...) logic
-        const fullMovies = await Promise.all(ids.map((id) => 
-          typeof id === 'object' ? id : tmdbExt.getMovieDetails(id)
-        ));
-        setWatchlist(fullMovies.filter(Boolean));
+        // Store only basic objects with IDs to avoid overfetching
+        const basicMovies = ids.map((id) => (typeof id === "object" ? id : { id }));
+        setWatchlist(basicMovies);
         // Allow outgoing sync after hydration settles
         setTimeout(() => { skipSyncRef.current = false; }, 0);
       })

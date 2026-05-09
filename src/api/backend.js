@@ -5,7 +5,7 @@ export const BACKEND_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
 // ── axios instance ───────────────────────────────────────────────────────────
-const api = axios.create({
+export const api = axios.create({
   baseURL: BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
@@ -37,10 +37,10 @@ api.interceptors.response.use(
 export const backend = {
   // Auth
   login: (email, password) =>
-    api.post("/auth/login", { email, password }).then((res) => res.data),
+    api.post("/login", { email, password }).then((res) => res.data),
 
   signup: (name, email, password) =>
-    api.post("/auth/signup", { name, email, password }).then((res) => res.data),
+    api.post("/signup", { name, email, password }).then((res) => res.data),
 
   // Recommendations
   getRecommendations: (userId) =>

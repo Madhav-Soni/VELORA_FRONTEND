@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useVeloraStore } from "../store/useVeloraStore";
 import { IMAGE_BASE } from "../api/tmdb";
+import { useWatchlistDetails } from "../hooks/useMovieQueries";
 
 const PLACEHOLDER = "https://via.placeholder.com/200x300/111/333?text=No+Image";
 
@@ -36,8 +37,14 @@ const EmptyState = () => {
 export default function WatchlistPage() {
   const navigate = useNavigate();
   const { onMovieSelect } = useOutletContext() ?? {};
-  const { watchlist, removeFromWatchlist, clearWatchlist } = useVeloraStore();
+  const { watchlist, removeFromWatchlistAsync, clearWatchlistAsync } = useVeloraStore();
   const [confirmClear, setConfirmClear] = useState(false);
+
+  const watchlistQueries = useWatchlistDetails(watchlist);
+  const fullWatchlist = watchlistQueries
+    .map((q) => q.data)
+    .filter(Boolean);
+  const isLoading = watchlistQueries.some((q) => q.isLoading);
 
   return (
     <div className="px-6 sm:px-12 py-10 max-w-[1600px] mx-auto">
@@ -70,7 +77,7 @@ export default function WatchlistPage() {
                   <span className="text-[10px] font-black text-brand uppercase tracking-wider">Are you sure?</span>
                   <div className="flex gap-3">
                     <button 
-                      onClick={() => { clearWatchlist(); setConfirmClear(false); }}
+                      onClick={() => { clearWatchlistAsync(); setConfirmClear(false); }}
                       className="text-[10px] font-black text-white uppercase tracking-widest hover:underline"
                     >
                       Yes, Clear
@@ -109,66 +116,72 @@ export default function WatchlistPage() {
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-5 gap-y-10"
         >
           <AnimatePresence mode="popLayout">
-            {watchlist.map((movie, i) => {
-              const title = movie.title || movie.name || "Untitled";
-              const rating = movie.vote_average ? movie.vote_average.toFixed(1) : null;
-              
-              return (
-                <motion.div
-                  key={movie.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
-                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                  className="group"
-                >
-                  <div 
-                    onClick={() => onMovieSelect?.(movie.id)}
-                    className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden border border-white/5 bg-white/[0.02] shadow-2xl group-hover:border-brand/40 transition-all duration-500 cursor-pointer"
+            {isLoading && fullWatchlist.length === 0 ? (
+              Array.from({ length: watchlist.length }).map((_, i) => (
+                <div key={i} className="aspect-[2/3] rounded-[1.5rem] skeleton" />
+              ))
+            ) : (
+              fullWatchlist.map((movie) => {
+                const title = movie.title || movie.name || "Untitled";
+                const rating = movie.vote_average ? movie.vote_average.toFixed(1) : null;
+                
+                return (
+                  <motion.div
+                    key={movie.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="group"
                   >
-                    <img
-                      src={movie.poster_path ? `${IMAGE_BASE}${movie.poster_path}` : PLACEHOLDER}
-                      alt={title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      onError={(e) => { e.target.src = PLACEHOLDER; }}
-                      loading="lazy"
-                    />
-
-                    {/* Rating */}
-                    {rating && (
-                      <div className="absolute top-3 left-3 glass text-gold text-[10px] font-black px-2 py-1 rounded-lg">
-                        ★ {rating}
-                      </div>
-                    )}
-
-                    {/* Remove button */}
-                    <motion.button
-                      whileHover={{ scale: 1.1, backgroundColor: "#E50914" }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => { e.stopPropagation(); removeFromWatchlist(movie.id); }}
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full glass flex items-center justify-center text-white/50 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+                    <div 
+                      onClick={() => onMovieSelect?.(movie.id)}
+                      className="relative aspect-[2/3] rounded-[1.5rem] overflow-hidden border border-white/5 bg-white/[0.02] shadow-2xl group-hover:border-brand/40 transition-all duration-500 cursor-pointer"
                     >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="14" height="14">
-                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </motion.button>
-
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </div>
-                  
-                  <div className="mt-4 px-1">
-                    <p className="text-[13px] font-bold text-white/40 group-hover:text-white transition-colors truncate">
-                      {title}
-                    </p>
-                    <p className="text-[10px] font-black text-brand uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      View Details
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
+                      <img
+                        src={movie.poster_path ? `${IMAGE_BASE}${movie.poster_path}` : PLACEHOLDER}
+                        alt={title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => { e.target.src = PLACEHOLDER; }}
+                        loading="lazy"
+                      />
+  
+                      {/* Rating */}
+                      {rating && (
+                        <div className="absolute top-3 left-3 glass text-gold text-[10px] font-black px-2 py-1 rounded-lg">
+                          ★ {rating}
+                        </div>
+                      )}
+  
+                      {/* Remove button */}
+                      <motion.button
+                        whileHover={{ scale: 1.1, backgroundColor: "#E50914" }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => { e.stopPropagation(); removeFromWatchlistAsync(movie.id); }}
+                        className="absolute top-3 right-3 w-8 h-8 rounded-full glass flex items-center justify-center text-white/50 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-300"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="14" height="14">
+                          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </motion.button>
+  
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </div>
+                    
+                    <div className="mt-4 px-1">
+                      <p className="text-[13px] font-bold text-white/40 group-hover:text-white transition-colors truncate">
+                        {title}
+                      </p>
+                      <p className="text-[10px] font-black text-brand uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        View Details
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })
+            )}
           </AnimatePresence>
         </motion.div>
       )}

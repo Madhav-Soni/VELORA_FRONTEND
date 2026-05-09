@@ -21,12 +21,6 @@ export default function MovieModal({ movieId, onClose }) {
   const inWatchlist = movie ? isInWatchlist(movie.id) : false;
 
   useEffect(() => {
-    if (movieId && userId) {
-      backend.addToWatchHistory(userId, movieId).catch(console.error);
-    }
-  }, [movieId, userId]);
-
-  useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);

@@ -1,4 +1,4 @@
-import { BACKEND_URL } from "./backend";
+import { BACKEND_URL, api } from "./backend";
 
 const BASE_URL = `${BACKEND_URL}/tmdb`;
 
@@ -6,10 +6,8 @@ export const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 export const BACKDROP_BASE = "https://image.tmdb.org/t/p/w1280";
 
 export const fetcher = async (endpoint) => {
-  const url = `${BASE_URL}${endpoint}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`TMDB Proxy Error: ${res.status}`);
-  return res.json();
+  const res = await api.get(`/tmdb${endpoint}`);
+  return res.data;
 };
 
 // Extended endpoints for full app
