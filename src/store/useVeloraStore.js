@@ -145,7 +145,7 @@ export const useVeloraStore = create(
   )
 );
 
-// ── Shim: re-export as useVeloraStore and useVeloraStore so existing imports keep working ─────
+// ── Shim: re-export as useWatchlistStore and useCineStore so existing imports keep working ─────
 // This ensures a smooth transition while we update other files to use useVeloraStore.
-export const useVeloraStore = useVeloraStore;
-export const useVeloraStore = useVeloraStore;
+export const useCineStore = useVeloraStore;
+export const useWatchlistStore = useVeloraStore;
