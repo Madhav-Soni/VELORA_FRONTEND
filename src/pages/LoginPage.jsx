@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useVeloraStore } from '../store/useVeloraStore'
 import { backend } from '../api/backend'
+import { VeloraLogoFull } from '../components/VeloraLogo'
 
 const BACKDROP = 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'
 
@@ -58,16 +59,9 @@ export default function LoginPage() {
       </div>
 
       {/* Logo */}
-      <motion.div
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="absolute top-8 left-8 flex items-center gap-3"
-      >
-        <div className="w-10 h-10 bg-brand-red rounded-xl flex items-center justify-center shadow-lg shadow-brand-red/30">
-          <span className="font-display text-white text-lg">V</span>
-        </div>
-        <span className="font-display text-3xl tracking-widest text-white">VELORA</span>
-      </motion.div>
+      <div className="absolute top-8 left-8 z-20">
+        <VeloraLogoFull animated={true} />
+      </div>
 
       {/* Card */}
       <motion.div

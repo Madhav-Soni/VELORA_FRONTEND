@@ -2,6 +2,7 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useVeloraStore } from "../../store/useVeloraStore";
+import { VeloraLogoIcon } from "../VeloraLogo";
 
 const NAV = [
   { to: "/home", label: "Home", icon: <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg> },
@@ -55,11 +56,14 @@ export default function Sidebar() {
             </button>
 
             {/* Logo */}
-            <div className="px-6 pt-10 pb-12">
-              <span className="text-2xl font-black font-display text-gradient-red tracking-wider block">
-                VELORA
-              </span>
-              <p className="text-[9px] font-black text-white/20 tracking-[0.3em] uppercase mt-1">Curated for your vibe</p>
+            <div className="px-6 pt-10 pb-12 flex items-center gap-3">
+              <VeloraLogoIcon size={40} />
+              <div className="hidden sm:flex flex-col">
+                <span className="text-xl font-black font-display text-gradient-red tracking-wider">
+                  VELORA
+                </span>
+                <p className="text-[8px] font-black text-white/20 tracking-[0.3em] uppercase">Curated</p>
+              </div>
             </div>
 
             {/* Nav */}

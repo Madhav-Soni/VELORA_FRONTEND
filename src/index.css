@@ -50,6 +50,19 @@
   .hover-lift:hover {
     transform: translateY(-4px);
   }
+
+  /* Logo premium glow effects */
+  .logo-glow {
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
+  }
+
+  .logo-glow-dark {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.6), 0 0 80px rgba(239, 68, 68, 0.2);
+  }
+
+  .shadow-inset {
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+  }
 }
 
 @keyframes shimmer {
