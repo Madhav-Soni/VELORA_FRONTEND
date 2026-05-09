@@ -6,7 +6,7 @@ import { useWatchlistStore } from "../store/useWatchlistStore";
 const PLACEHOLDER = "https://via.placeholder.com/200x300/111/333?text=No+Image";
 
 export default function MovieCard({ movie, index = 0, onSelect }) {
-  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlistStore();
+  const { addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useWatchlistStore();
   const [imgLoaded, setImgLoaded] = useState(false);
   const inWatchlist = isInWatchlist(movie.id);
 
@@ -17,7 +17,7 @@ export default function MovieCard({ movie, index = 0, onSelect }) {
 
   const handleWatchlist = (e) => {
     e.stopPropagation();
-    inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie);
+    inWatchlist ? removeFromWatchlistAsync(movie.id) : addToWatchlistAsync(movie);
   };
 
   return (

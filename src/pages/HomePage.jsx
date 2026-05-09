@@ -11,7 +11,7 @@ import { BACKDROP_BASE } from "../api/tmdb";
 const BACKDROP_PLACEHOLDER = "https://via.placeholder.com/1280x720/080808/080808";
 
 function HeroBanner({ movie, onSelect }) {
-  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useCineStore();
+  const { addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useCineStore();
   if (!movie) return null;
 
   const inWatchlist = isInWatchlist(movie.id);
@@ -76,7 +76,7 @@ function HeroBanner({ movie, onSelect }) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
+              onClick={() => inWatchlist ? removeFromWatchlistAsync(movie.id) : addToWatchlistAsync(movie)}
               className={`flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-2xl border-2 transition-all duration-300 ${
                 inWatchlist
                   ? "bg-brand/10 border-brand text-brand"

@@ -23,7 +23,7 @@ export default function AppLayout() {
     }
   }, [selectedMovieId, userId]);
 
-  // ── 2. Hydrate watchlist FROM backend on login ────────────────────────────
+  // ── 2. Hydrate watchlist & prefs FROM backend on login ────────────────────────────
   useEffect(() => {
     if (!userId) {
       hydratedRef.current = false;
@@ -33,6 +33,11 @@ export default function AppLayout() {
     if (hydratedRef.current) return;
     hydratedRef.current = true;
 
+    // Load Preferences
+    const { syncPreferencesWithBackend } = useCineStore.getState();
+    syncPreferencesWithBackend().catch(console.error);
+
+    // Load Watchlist
     backend
       .getWatchlist(userId)
       .then(async (ids) => {
@@ -40,7 +45,11 @@ export default function AppLayout() {
           skipSyncRef.current = false;
           return;
         }
-        const fullMovies = await Promise.all(ids.map((id) => tmdbExt.getMovieDetails(id)));
+        // If the backend returns full objects, we use them. If IDs, we hydrate.
+        // Assuming IDs based on the .map(id => ...) logic
+        const fullMovies = await Promise.all(ids.map((id) => 
+          typeof id === 'object' ? id : tmdbExt.getMovieDetails(id)
+        ));
         setWatchlist(fullMovies.filter(Boolean));
         // Allow outgoing sync after hydration settles
         setTimeout(() => { skipSyncRef.current = false; }, 0);

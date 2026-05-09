@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useMovieDetails } from "../hooks/useMovieQueries";
 import { IMAGE_BASE, BACKDROP_BASE } from "../api/tmdb";
 import { useWatchlistStore } from "../store/useWatchlistStore";
+import { backend } from "../api/backend";
 
 const PLACEHOLDER = "https://via.placeholder.com/300x450/111/333?text=No+Image";
 const IMG_SM = "https://image.tmdb.org/t/p/w185";
@@ -16,8 +17,14 @@ const MetaBadge = ({ children, icon, color = "text-white/40" }) => (
 
 export default function MovieModal({ movieId, onClose }) {
   const { data: movie, isLoading } = useMovieDetails(movieId);
-  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlistStore();
+  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useWatchlistStore();
   const inWatchlist = movie ? isInWatchlist(movie.id) : false;
+
+  useEffect(() => {
+    if (movieId && userId) {
+      backend.addToWatchHistory(userId, movieId).catch(console.error);
+    }
+  }, [movieId, userId]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -154,7 +161,7 @@ export default function MovieModal({ movieId, onClose }) {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
+                        onClick={() => inWatchlist ? removeFromWatchlistAsync(movie.id) : addToWatchlistAsync(movie)}
                         className={`flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-wider rounded-2xl border-2 transition-all duration-300 ${
                           inWatchlist
                             ? "bg-brand/10 border-brand text-brand"

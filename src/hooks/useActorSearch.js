@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { BACKEND_URL } from "../api/backend";
 
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const BASE_URL = "https://api.themoviedb.org/3";
+const BASE_URL = `${BACKEND_URL}/tmdb`;
 
 export const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 
@@ -13,7 +13,7 @@ export default function useActorSearch() {
     if (!query) return [];
 
     const res = await fetch(
-      `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+      `${BASE_URL}/search/person?query=${encodeURIComponent(query)}`
     );
 
     if (!res.ok) throw new Error("Search failed");
@@ -28,13 +28,13 @@ export default function useActorSearch() {
   const { data = [], isLoading } = useQuery({
     queryKey: ["actors", query],
     queryFn: searchActors,
-    enabled: !!query, // 🔥 ONLY run when user types
+    enabled: !!query,
   });
 
   return {
     actors: data,
     isLoading,
-    setQuery, // 🔥 THIS is how UI triggers search
+    setQuery,
   };
 }
 
@@ -42,7 +42,7 @@ export function usePopularActors() {
   return useQuery({
     queryKey: ["popular_actors"],
     queryFn: async () => {
-      const res = await fetch(`${BASE_URL}/person/popular?api_key=${API_KEY}`);
+      const res = await fetch(`${BASE_URL}/person/popular`);
       if (!res.ok) throw new Error("Failed to fetch popular actors");
       const data = await res.json();
       return data.results

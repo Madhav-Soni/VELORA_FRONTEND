@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { backend } from "../api/backend";
 
 export const useCineStore = create(
   persist(
@@ -68,6 +69,60 @@ export const useCineStore = create(
       isInWatchlist: (movieId) => get().watchlist.some((m) => m.id === movieId),
 
       clearWatchlist: () => set({ watchlist: [] }),
+
+      // ── async sync actions ───────────────────────────────────────────────
+      syncWatchlistWithBackend: async () => {
+        const { userId, watchlist } = get();
+        if (!userId) return;
+        try {
+          const remoteList = await backend.getWatchlist(userId);
+          // Simple merge: remote wins or we merge based on ID
+          set({ watchlist: remoteList });
+        } catch (err) {
+          console.error("Watchlist sync failed:", err);
+        }
+      },
+
+      addToWatchlistAsync: async (movie) => {
+        const { userId } = get();
+        get().addToWatchlist(movie); // Optimistic update
+        if (userId) {
+          try {
+            await backend.addToWatchlist(userId, movie);
+          } catch (err) {
+            console.error("Backend watchlist add failed:", err);
+          }
+        }
+      },
+
+      removeFromWatchlistAsync: async (movieId) => {
+        const { userId } = get();
+        get().removeFromWatchlist(movieId); // Optimistic update
+        if (userId) {
+          try {
+            await backend.removeFromWatchlist(userId, movieId);
+          } catch (err) {
+            console.error("Backend watchlist remove failed:", err);
+          }
+        }
+      },
+
+      syncPreferencesWithBackend: async () => {
+        const { userId } = get();
+        if (!userId) return;
+        try {
+          const prefs = await backend.getPreferences(userId);
+          if (prefs) {
+            set({
+              selectedActors: prefs.favoriteActors || [],
+              selectedGenres: prefs.favoriteGenres || [],
+              isOnboarded: !!(prefs.favoriteActors?.length || prefs.favoriteGenres?.length),
+            });
+          }
+        } catch (err) {
+          console.error("Preferences sync failed:", err);
+        }
+      },
 
       // ── legacy compat ─────────────────────────────────────────────────────
       setUserId: (id) => set({ userId: id }),

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCineStore } from "../store/useCineStore";
 import ActorPicker from "../components/ActorPicker";
 import { IMAGE_BASE } from "../api/tmdb";
+import { backend } from "../api/backend";
 
 const GENRES = [
   { id: 28, name: "Action" }, { id: 12, name: "Adventure" },
@@ -27,6 +28,7 @@ const IMG_PLACEHOLDER = "https://via.placeholder.com/64x64/111/444?text=?";
 
 export default function PreferencesPage() {
   const {
+    userId,
     selectedActors, setSelectedActors,
     selectedGenres, toggleGenre,
     selectedMood, setSelectedMood,
@@ -45,11 +47,37 @@ export default function PreferencesPage() {
     );
   };
 
-  const saveActors = () => {
+  const saveActors = async () => {
     setSelectedActors(localActors);
+    if (userId) {
+      try {
+        await backend.updatePreferences(userId, {
+          favoriteActors: localActors.map(a => a.id),
+          favoriteGenres: selectedGenres.map(g => g.name)
+        });
+      } catch (err) {
+        console.error("Failed to sync actors:", err);
+      }
+    }
     setShowActorPicker(false);
     setShowSavedToast(true);
     setTimeout(() => setShowSavedToast(false), 2500);
+  };
+
+  const handleToggleGenre = async (genre) => {
+    toggleGenre(genre);
+    if (userId) {
+      // Get fresh state after toggle
+      const { selectedGenres: nextGenres } = useCineStore.getState();
+      try {
+        await backend.updatePreferences(userId, {
+          favoriteActors: selectedActors.map(a => a.id),
+          favoriteGenres: nextGenres.map(g => g.name)
+        });
+      } catch (err) {
+        console.error("Failed to sync genres:", err);
+      }
+    }
   };
 
   return (
@@ -160,7 +188,7 @@ export default function PreferencesPage() {
                 transition={{ delay: i * 0.03 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => toggleGenre(genre)}
+                onClick={() => handleToggleGenre(genre)}
                 className={`px-4 py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] border-2 transition-all duration-300 ${
                   active
                     ? "border-brand bg-brand/10 text-white shadow-xl shadow-brand/10"

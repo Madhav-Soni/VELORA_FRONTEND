@@ -1,67 +1,75 @@
+import axios from "axios";
 import { useCineStore } from "../store/useCineStore";
 
 export const BACKEND_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
-// ── helper ──────────────────────────────────────────────────────────────────
-async function request(path, options = {}) {
-  const { token } = useCineStore.getState();
-  const headers = {
+// ── axios instance ───────────────────────────────────────────────────────────
+const api = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...options.headers,
-  };
+  },
+});
 
-  const res = await fetch(`${BACKEND_URL}${path}`, { ...options, headers });
-
-  // Global 401 handler — token expired or invalid
-  if (res.status === 401) {
-    useCineStore.getState().logout();
-    // Let the caller handle the rejection; App router will redirect on logout
-    throw new Error("Session expired. Please log in again.");
+// Request interceptor: attach JWT token
+api.interceptors.request.use((config) => {
+  const { token } = useCineStore.getState();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message || `Request failed: ${res.status}`);
+// Response interceptor: global 401 handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      useCineStore.getState().logout();
+      // Optionally redirect or show message
+    }
+    return Promise.reject(error);
   }
-
-  return res.json();
-}
+);
 
 // ── public API ───────────────────────────────────────────────────────────────
 export const backend = {
+  // Auth
   login: (email, password) =>
-    request("/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    }),
+    api.post("/auth/login", { email, password }).then((res) => res.data),
 
   signup: (name, email, password) =>
-    request("/signup", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password }),
-    }),
+    api.post("/auth/signup", { name, email, password }).then((res) => res.data),
 
-  getRecommendations: (userId) => request(`/recommendations/${userId}`),
+  // Recommendations
+  getRecommendations: (userId) =>
+    api.get(`/recommendations/${userId}`).then((res) => res.data),
+
+  // Preferences
+  getPreferences: (userId) =>
+    api.get(`/preferences/${userId}`).then((res) => res.data),
 
   updatePreferences: (userId, data) =>
-    request(`/preferences/${userId}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
+    api.put(`/preferences/${userId}`, data).then((res) => res.data),
 
-  getWatchlist: (userId) => request(`/watchlist/${userId}`),
+  // Watchlist
+  getWatchlist: (userId) =>
+    api.get(`/watchlist/${userId}`).then((res) => res.data),
+
+  addToWatchlist: (userId, movie) =>
+    api.post(`/watchlist/${userId}`, { movie }).then((res) => res.data),
+
+  removeFromWatchlist: (userId, movieId) =>
+    api.delete(`/watchlist/${userId}/${movieId}`).then((res) => res.data),
 
   syncWatchlist: (userId, movieIds) =>
-    request(`/watchlist-sync/${userId}`, {
-      method: "POST",
-      body: JSON.stringify({ movieIds }),
-    }),
+    api.post(`/watchlist-sync/${userId}`, { movieIds }).then((res) => res.data),
+
+  // History
+  getWatchHistory: (userId) =>
+    api.get(`/history/${userId}`).then((res) => res.data),
 
   addToWatchHistory: (userId, movieId) =>
-    request(`/watched/${userId}`, {
-      method: "POST",
-      body: JSON.stringify({ movieId }),
-    }),
+    api.post(`/history/${userId}`, { movieId }).then((res) => res.data),
 };
