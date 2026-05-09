@@ -7,6 +7,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.100.6",
     "axios": "^1.16.0",
+    "express": "^4.21.2",
     "framer-motion": "^12.38.0",
     "lodash.debounce": "^4.0.8",
     "react": "^19.2.5",
