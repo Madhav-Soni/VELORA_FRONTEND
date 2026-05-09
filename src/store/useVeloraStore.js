@@ -101,8 +101,11 @@ export const useVeloraStore = create(
         if (!userId) return;
         try {
           const remoteList = await backend.getWatchlist(userId);
-          // Simple merge: remote wins or we merge based on ID
-          set({ watchlist: remoteList });
+          // Standardize: ensure watchlist items are objects with an 'id' property
+          const normalizedList = (remoteList || []).map(id => 
+            typeof id === "object" ? id : { id }
+          );
+          set({ watchlist: normalizedList });
         } catch (err) {
           console.error("Watchlist sync failed:", err);
         }
