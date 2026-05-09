@@ -153,12 +153,14 @@ export const useVeloraStore = create(
           const prefs = await backend.getPreferences(userId);
           if (prefs) {
             // Normalize genres: backend might return strings, frontend expects objects
-            const normalizedGenres = (prefs.favoriteGenres || []).map(g => {
-              if (typeof g === "string") {
-                return GENRES.find(item => item.name === g) || { id: Math.random(), name: g };
-              }
-              return g;
-            });
+            const normalizedGenres = (prefs.favoriteGenres || [])
+              .map(g => {
+                if (typeof g === "string") {
+                  return GENRES.find(item => item.name === g) || null;
+                }
+                return g;
+              })
+              .filter(Boolean);
 
             // Hydrate mood: find matching mood object if backend returns ID or partial object
             let hydratedMood = prefs.selectedMood || null;
