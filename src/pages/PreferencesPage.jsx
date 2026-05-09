@@ -8,10 +8,20 @@ import { backend } from "../api/backend";
 const GENRES = [
   { id: 28, name: "Action" }, { id: 12, name: "Adventure" },
   { id: 16, name: "Animation" }, { id: 35, name: "Comedy" },
-  { id: 80, name: "Crime" }, { id: 18, name: "Drama" },
-  { id: 14, name: "Fantasy" }, { id: 27, name: "Horror" },
-  { id: 9648, name: "Mystery" }, { id: 10749, name: "Romance" },
-  { id: 878, name: "Sci-Fi" }, { id: 53, name: "Thriller" },
+  { id: 80, name: "Crime" }, { id: 99, name: "Documentary" },
+  { id: 18, name: "Drama" }, { id: 14, name: "Fantasy" },
+  { id: 27, name: "Horror" }, { id: 9648, name: "Mystery" },
+  { id: 10749, name: "Romance" }, { id: 878, name: "Sci-Fi" },
+  { id: 53, name: "Thriller" }, { id: 37, name: "Western" },
+];
+
+const MOODS = [
+  { id: "relaxed", label: "Relaxed", icon: "😌" },
+  { id: "excited", label: "Excited", icon: "🤩" },
+  { id: "melancholy", label: "Melancholy", icon: "😢" },
+  { id: "tense", label: "Tense", icon: "😰" },
+  { id: "romantic", label: "Romantic", icon: "🥰" },
+  { id: "thoughtful", label: "Thoughtful", icon: "🤔" },
 ];
 
 const SectionHeader = ({ title, subtitle, action }) => (
@@ -53,7 +63,8 @@ export default function PreferencesPage() {
       try {
         await backend.updatePreferences(userId, {
           favoriteActors: localActors.map(a => a.id),
-          favoriteGenres: selectedGenres.map(g => g.name)
+          favoriteGenres: selectedGenres.map(g => g.name),
+          selectedMood: selectedMood
         });
       } catch (err) {
         console.error("Failed to sync actors:", err);
@@ -68,11 +79,12 @@ export default function PreferencesPage() {
     toggleGenre(genre);
     if (userId) {
       // Get fresh state after toggle
-      const { selectedGenres: nextGenres } = useVeloraStore.getState();
+      const { selectedGenres: nextGenres, selectedMood } = useVeloraStore.getState();
       try {
         await backend.updatePreferences(userId, {
           favoriteActors: selectedActors.map(a => a.id),
-          favoriteGenres: nextGenres.map(g => g.name)
+          favoriteGenres: nextGenres.map(g => g.name),
+          selectedMood: selectedMood
         });
       } catch (err) {
         console.error("Failed to sync genres:", err);
@@ -208,23 +220,39 @@ export default function PreferencesPage() {
           title="Atmosphere" 
           subtitle="Real-time Vibe Calibration"
         />
-        <div className="flex flex-wrap gap-3">
-          {["Excited 🔥", "Chill 🌙", "Inspired 💡", "Scared 😱", "Happy 😄", "Emotional 💙"].map((m) => {
-            const id = m.split(" ")[0].toLowerCase();
-            const active = selectedMood?.id === id;
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {MOODS.map((m) => {
+            const active = selectedMood?.id === m.id;
             return (
               <motion.button
-                key={id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedMood(active ? null : { id, label: m })}
-                className={`px-6 py-3 rounded-2xl text-xs font-bold border-2 transition-all duration-300 ${
+                key={m.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={async () => {
+                  const nextMood = active ? null : m;
+                  setSelectedMood(nextMood);
+                  if (userId) {
+                    try {
+                      await backend.updatePreferences(userId, {
+                        favoriteActors: selectedActors.map(a => a.id),
+                        favoriteGenres: selectedGenres.map(g => g.name),
+                        selectedMood: nextMood
+                      });
+                    } catch (err) {
+                      console.error("Failed to sync mood:", err);
+                    }
+                  }
+                }}
+                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
                   active
                     ? "border-gold bg-gold/10 text-gold"
                     : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white hover:border-white/10"
                 }`}
               >
-                {m}
+                <span className="text-2xl">{m.icon}</span>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${active ? "text-gold" : "text-white/40"}`}>
+                  {m.label}
+                </span>
               </motion.button>
             );
           })}

@@ -9,21 +9,12 @@ export const useMovieDetails = (id) =>
     staleTime: 1000 * 60 * 30,
   });
 
-export const useWatchlistDetails = (movies) =>
-  useQueries({
-    queries: movies.map((m) => ({
-      queryKey: ["movieDetails", m.id],
-      queryFn: () => tmdbExt.getMovieDetails(m.id),
-      staleTime: 1000 * 60 * 30,
-    })),
-  });
-
 export const useWatchlistMinimal = (movies) =>
   useQueries({
     queries: (movies || []).map((m) => ({
       queryKey: ["movieMinimal", m.id],
       queryFn: () => tmdbExt.getMovieMinimal(m.id),
-      staleTime: 1000 * 60 * 60, // Minimal info stays fresh longer
+      staleTime: 1000 * 60 * 60,
     })),
   });
 
