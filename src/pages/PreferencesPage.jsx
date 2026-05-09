@@ -63,7 +63,7 @@ export default function PreferencesPage() {
       try {
         await backend.updatePreferences(userId, {
           favoriteActors:
-            selectedActors.map(a => ({
+            localActors.map(a => ({
               id: a.id,
               name: a.name,
               profile_path: a.profile_path
@@ -87,7 +87,13 @@ export default function PreferencesPage() {
       const { selectedGenres: nextGenres, selectedMood } = useVeloraStore.getState();
       try {
         await backend.updatePreferences(userId, {
-          favoriteActors: selectedActors.map(a => a.id),
+          favoriteActors:
+            selectedActors.map(a => ({
+              id: a.id,
+              name: a.name,
+              profile_path:
+                a.profile_path ?? null
+            })),
           favoriteGenres: nextGenres.map(g => g.name),
           selectedMood: selectedMood?.id ?? null
         });
@@ -207,8 +213,8 @@ export default function PreferencesPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleToggleGenre(genre)}
                 className={`px-4 py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] border-2 transition-all duration-300 ${active
-                    ? "border-brand bg-brand/10 text-white shadow-xl shadow-brand/10"
-                    : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white/60 hover:border-white/10"
+                  ? "border-brand bg-brand/10 text-white shadow-xl shadow-brand/10"
+                  : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white/60 hover:border-white/10"
                   }`}
               >
                 {genre.name}
@@ -238,7 +244,11 @@ export default function PreferencesPage() {
                   if (userId) {
                     try {
                       await backend.updatePreferences(userId, {
-                        favoriteActors: selectedActors.map(a => a.id),
+                        favoriteActors: selectedActors.map(a => ({
+                          id: a.id,
+                          name: a.name,
+                          profile_path: a.profile_path ?? null
+                        })),
                         favoriteGenres: selectedGenres.map(g => g.name),
                         selectedMood: nextMood?.id ?? null
                       });
@@ -248,8 +258,8 @@ export default function PreferencesPage() {
                   }
                 }}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${active
-                    ? "border-gold bg-gold/10 text-gold"
-                    : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white hover:border-white/10"
+                  ? "border-gold bg-gold/10 text-gold"
+                  : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white hover:border-white/10"
                   }`}
               >
                 <span className="text-2xl">{m.icon}</span>
