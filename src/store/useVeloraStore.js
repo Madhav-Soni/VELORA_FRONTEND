@@ -168,11 +168,24 @@ export const useVeloraStore = create(
               hydratedMood = MOODS.find(m => m.id === hydratedMood.id) || hydratedMood;
             }
 
+            // Normalize actors: ensure they have ID and Name, ignore malformed objects
+            // Preserve existing local actors if backend payload is completely invalid (not an array)
+            const remoteActors = prefs.favoriteActors;
+            const normalizedActors = Array.isArray(remoteActors)
+              ? remoteActors
+                  .filter(a => a && typeof a === 'object' && (a.id || a._id) && a.name)
+                  .map(a => ({
+                    id: a.id || a._id,
+                    name: a.name,
+                    profile_path: a.profile_path || null
+                  }))
+              : get().selectedActors;
+
             set({
-              selectedActors: prefs.favoriteActors || [],
+              selectedActors: normalizedActors,
               selectedGenres: normalizedGenres,
               selectedMood: hydratedMood,
-              isOnboarded: !!(prefs.favoriteActors?.length || prefs.favoriteGenres?.length),
+              isOnboarded: !!(normalizedActors.length || normalizedGenres.length),
             });
           }
         } catch (err) {

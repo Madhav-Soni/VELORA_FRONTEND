@@ -116,11 +116,6 @@ export default function HomePage() {
   const { onMovieSelect } = useOutletContext() ?? {};
   const { selectedActors, userId, activeMood } = useVeloraStore();
 
-  const recommendations = useRecommendations(userId);
-  const trending = useTrending();
-  const topRated = useTopRated();
-  const nowPlaying = useNowPlaying();
-
   const MOOD_TO_GENRE = {
     "Action": 28,
     "Comedy": 35,
@@ -130,10 +125,17 @@ export default function HomePage() {
     "Thriller": 53
   };
 
+  const activeGenreId = MOOD_TO_GENRE[activeMood];
+
+  const recommendations = useRecommendations(userId);
+  const trending = useTrending(activeGenreId);
+  const topRated = useTopRated(activeGenreId);
+  const nowPlaying = useNowPlaying(activeGenreId);
+
   const filterMovies = (movies) => {
     if (!movies) return [];
     if (activeMood === "All") return movies;
-    const genreId = MOOD_TO_GENRE[activeMood];
+    const genreId = activeGenreId;
     if (!genreId) return movies;
     return movies.filter(m => m.genre_ids?.includes(genreId) || m.genres?.some(g => g.id === genreId));
   };

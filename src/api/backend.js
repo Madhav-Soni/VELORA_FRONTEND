@@ -73,8 +73,8 @@ export const backend = {
 
   // History
   getWatchHistory: (userId) =>
-    api.get(`/history/${userId}`).then((res) => res.data),
+    api.get(`/watched/${userId}`).then((res) => res.data),
 
   addToWatchHistory: (userId, movieId) =>
-    api.post(`/history/${userId}`, { movieId }).then((res) => res.data),
+    api.post(`/watched/${userId}`, { movieId }).then((res) => res.data),
 };

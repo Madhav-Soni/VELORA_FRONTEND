@@ -1,31 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
 import { tmdb } from "../api/tmdb";
 
-export const useTrending = () =>
+export const useTrending = (genreId) =>
   useQuery({
-    queryKey: ["trending"],
-    queryFn: tmdb.getTrending,
-    staleTime: 1000 * 60 * 60, // 1 hour
+    queryKey: ["trending", genreId],
+    queryFn: () => genreId ? tmdb.getDiscover(genreId) : tmdb.getTrending(),
+    staleTime: 1000 * 60 * 60,
   });
 
 export const usePopularActors = () =>
   useQuery({
     queryKey: ["popularActors"],
     queryFn: tmdb.getPopularActors,
-    staleTime: 1000 * 60 * 60 * 24, // 1 day
+    staleTime: 1000 * 60 * 60 * 24,
   });
 
-export const useTopRated = () =>
+export const useTopRated = (genreId) =>
   useQuery({
-    queryKey: ["topRated"],
-    queryFn: tmdb.getTopRated,
+    queryKey: ["topRated", genreId],
+    queryFn: () => genreId ? tmdb.getDiscover(genreId) : tmdb.getTopRated(),
     staleTime: 1000 * 60 * 60,
   });
 
-export const useNowPlaying = () =>
+export const useNowPlaying = (genreId) =>
   useQuery({
-    queryKey: ["nowPlaying"],
-    queryFn: tmdb.getNowPlaying,
+    queryKey: ["nowPlaying", genreId],
+    queryFn: () => genreId ? tmdb.getDiscover(genreId) : tmdb.getNowPlaying(),
     staleTime: 1000 * 60 * 60,
   });
 

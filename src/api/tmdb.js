@@ -28,4 +28,5 @@ export const tmdb = {
   getTopRated: () => fetcher("/movie/top_rated"),
   getNowPlaying: () => fetcher("/movie/now_playing"),
   getMoviesByActor: (id) => fetcher(`/person/${id}/movie_credits`),
+  getDiscover: (genreId) => fetcher(`/discover/movie?with_genres=${genreId}&sort_by=popularity.desc`),
 };
