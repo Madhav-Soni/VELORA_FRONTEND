@@ -12,6 +12,8 @@ import DiscoverPage from "./pages/DiscoverPage";
 import WatchlistPage from "./pages/WatchlistPage";
 import PreferencesPage from "./pages/PreferencesPage";
 import ProfilePage from "./pages/ProfilePage";
+import TrendingPage from "./pages/TrendingPage";
+import FavoritesPage from "./pages/FavoritesPage";
 
 // ── TanStack Query client ────────────────────────────────────────────────────
 const queryClient = new QueryClient({
@@ -106,14 +108,8 @@ export default function App() {
             >
               <Route path="/home" element={<HomePage />} />
               <Route path="/discover" element={<DiscoverPage />} />
-              <Route
-                path="/trending"
-                element={<div className="p-10 text-white text-2xl font-bold">Trending Coming Soon</div>}
-              />
-              <Route
-                path="/favorites"
-                element={<div className="p-10 text-white text-2xl font-bold">Favorites Coming Soon</div>}
-              />
+              <Route path="/trending" element={<TrendingPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/watchlist" element={<WatchlistPage />} />
               <Route path="/preferences" element={<PreferencesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
