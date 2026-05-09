@@ -10,15 +10,18 @@ export const useVeloraStore = create(
       token: null,
       userName: null,
 
-      /** Called after login OR signup. Safely ignores undefined name. */
-      setAuth: ({ userId, token, name }) =>
+      /** Called after login OR signup. Safely handles missing name during signup. */
+      setAuth: ({ userId, token, name }) => {
+        const currentName = get().userName;
         set({
           userId,
           token,
-          // Only store name if it's a non-empty string — login may not return it
-          userName: name && typeof name === "string" && name.trim() ? name.trim() : (get().userName ?? null),
-        }),
-
+          // If name is provided, use it. If not, keep current name or null.
+          userName: (name && typeof name === "string" && name.trim()) 
+            ? name.trim() 
+            : (currentName || null),
+        });
+      },
       logout: () =>
         set({
           userId: null,
@@ -28,18 +31,21 @@ export const useVeloraStore = create(
           selectedActors: [],
           selectedGenres: [],
           selectedMood: null,
+          activeMood: "All",
           watchlist: [],
         }),
 
       // ── onboarding / preferences ──────────────────────────────────────────
       selectedActors: [],
       selectedGenres: [],
-      selectedMood: null,
+      selectedMood: null, // { id, label }
+      activeMood: "All", // For Topbar filtering
       isOnboarded: false,
 
       setSelectedActors: (actors) => set({ selectedActors: actors }),
       setSelectedGenres: (genres) => set({ selectedGenres: genres }),
       setSelectedMood: (mood) => set({ selectedMood: mood }),
+      setActiveMood: (mood) => set({ activeMood: mood }),
       setIsOnboarded: (val) => set({ isOnboarded: val }),
 
       toggleGenre: (genre) =>

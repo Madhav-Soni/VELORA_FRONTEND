@@ -13,6 +13,7 @@ export const fetcher = async (endpoint) => {
 // Extended endpoints for full app
 export const tmdbExt = {
   getMovieDetails: (id) => fetcher(`/movie/${id}?append_to_response=credits,watch/providers,videos`),
+  getMovieMinimal: (id) => fetcher(`/movie/${id}`),
   getActorDetails: (id) => fetcher(`/person/${id}?append_to_response=movie_credits`),
   searchMulti: (query) => fetcher(`/search/multi?query=${encodeURIComponent(query)}`),
   getRecommended: (id) => fetcher(`/movie/${id}/recommendations`),

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useVeloraStore } from "../store/useVeloraStore";
-import { useWatchlistDetails } from "../hooks/useMovieQueries";
+import { useWatchlistMinimal } from "../hooks/useMovieQueries";
 import MovieCard from "../components/MovieCard";
 
 export default function FavoritesPage() {
@@ -9,7 +9,7 @@ export default function FavoritesPage() {
   const { onMovieSelect } = useOutletContext() ?? {};
   const { watchlist } = useVeloraStore();
 
-  const watchlistQueries = useWatchlistDetails(watchlist);
+  const watchlistQueries = useWatchlistMinimal(watchlist);
   const fullMovies = watchlistQueries
     .map((q) => q.data)
     .filter(Boolean);

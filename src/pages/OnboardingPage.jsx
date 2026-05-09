@@ -15,12 +15,22 @@ const GENRES = [
   { id: 53, name: "Thriller" }, { id: 37, name: "Western" },
 ];
 
+const MOODS = [
+  { id: "relaxed", label: "Relaxed", icon: "😌" },
+  { id: "excited", label: "Excited", icon: "🤩" },
+  { id: "melancholy", label: "Melancholy", icon: "😢" },
+  { id: "tense", label: "Tense", icon: "😰" },
+  { id: "romantic", label: "Romantic", icon: "🥰" },
+  { id: "thoughtful", label: "Thoughtful", icon: "🤔" },
+];
+
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const { userId, setSelectedActors, setSelectedGenres, setIsOnboarded } = useVeloraStore();
+  const { userId, setSelectedActors, setSelectedGenres, setSelectedMood, setIsOnboarded } = useVeloraStore();
   const [step, setStep] = useState(0);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [mood, setMood] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const toggleGenre = (genre) => {
@@ -37,18 +47,20 @@ export default function OnboardingPage() {
       if (userId) {
         await backend.updatePreferences(userId, {
           favoriteActors: actors.map(a => a.id),
-          favoriteGenres: genres.map(g => g.name)
+          favoriteGenres: genres.map(g => g.name),
+          selectedMood: mood
         });
       }
       setSelectedActors(actors);
       setSelectedGenres(genres);
+      setSelectedMood(mood);
       setIsOnboarded(true);
       navigate("/home");
     } catch (error) {
       console.error("Failed to save preferences:", error);
-      // Even if it fails, maybe proceed or show an error. We'll proceed for now.
       setSelectedActors(actors);
       setSelectedGenres(genres);
+      setSelectedMood(mood);
       setIsOnboarded(true);
       navigate("/home");
     } finally {
@@ -94,6 +106,36 @@ export default function OnboardingPage() {
         </div>
       ),
       canNext: genres.length > 0,
+    },
+    {
+      title: "How are you feeling?",
+      subtitle: "We'll tailor recommendations to your current vibe",
+      content: (
+        <div className="grid grid-cols-2 gap-4">
+          {MOODS.map((m) => {
+            const selected = mood?.id === m.id;
+            return (
+              <motion.button
+                key={m.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setMood(m)}
+                className={`flex flex-col items-center gap-3 p-6 rounded-2xl border transition-all duration-300 ${
+                  selected
+                    ? "border-brand bg-brand/5 shadow-2xl shadow-brand/10"
+                    : "border-white/5 bg-white/[0.02] hover:border-white/10"
+                }`}
+              >
+                <span className="text-3xl">{m.icon}</span>
+                <span className={`text-xs font-black uppercase tracking-widest ${selected ? "text-brand" : "text-white/40"}`}>
+                  {m.label}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      ),
+      canNext: !!mood,
     },
   ];
 

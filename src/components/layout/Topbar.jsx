@@ -36,13 +36,12 @@ export default function Topbar({ onMovieSelect }) {
   const [input, setInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [activeMood, setActiveMood] = useState("All");
+  const { activeMood, setActiveMood, userName, resetPreferences } = useVeloraStore();
   const [focusedIdx, setFocusedIdx] = useState(-1);
   const [scrolled, setScrolled] = useState(false);
   
   const searchRef = useRef(null);
   const profileRef = useRef(null);
-  const { resetPreferences } = useVeloraStore();
 
   const debouncedQuery = useDebounce(input, 350);
   const { data, isFetching } = useSearchMulti(debouncedQuery);
@@ -219,9 +218,11 @@ export default function Topbar({ onMovieSelect }) {
           onClick={() => setShowProfile((p) => !p)}
           className="flex items-center gap-3 p-1 pl-3 glass rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300"
         >
-          <span className="text-[11px] font-black text-white/40 uppercase tracking-widest hidden lg:block">Madhav</span>
+          <span className="text-[11px] font-black text-white/40 uppercase tracking-widest hidden lg:block">
+            {userName || "User"}
+          </span>
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand to-brand-orange flex items-center justify-center text-white text-[11px] font-black shadow-lg">
-            M
+            {userName ? userName.charAt(0).toUpperCase() : "V"}
           </div>
           <motion.svg 
             animate={{ rotate: showProfile ? 180 : 0 }}

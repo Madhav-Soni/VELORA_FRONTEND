@@ -33,32 +33,43 @@ api.interceptors.response.use(
   }
 );
 
+// ── endpoints ────────────────────────────────────────────────────────────────
+export const ENDPOINTS = {
+  LOGIN: "/login",
+  SIGNUP: "/signup",
+  RECOMMENDATIONS: (userId) => `/recommendations/${userId}`,
+  PREFERENCES: (userId) => `/preferences/${userId}`,
+  WATCHLIST: (userId) => `/watchlist/${userId}`,
+  WATCHLIST_SYNC: (userId) => `/watchlist-sync/${userId}`,
+  HISTORY: (userId) => `/history/${userId}`,
+};
+
 // ── public API ───────────────────────────────────────────────────────────────
 export const backend = {
   // Auth
   login: (email, password) =>
-    api.post("/login", { email, password }).then((res) => res.data),
+    api.post(ENDPOINTS.LOGIN, { email, password }).then((res) => res.data),
 
   signup: (name, email, password) =>
-    api.post("/signup", { name, email, password }).then((res) => res.data),
+    api.post(ENDPOINTS.SIGNUP, { name, email, password }).then((res) => res.data),
 
   // Recommendations
   getRecommendations: (userId) =>
-    api.get(`/recommendations/${userId}`).then((res) => res.data),
+    api.get(ENDPOINTS.RECOMMENDATIONS(userId)).then((res) => res.data),
 
   // Preferences
   getPreferences: (userId) =>
-    api.get(`/preferences/${userId}`).then((res) => res.data),
+    api.get(ENDPOINTS.PREFERENCES(userId)).then((res) => res.data),
 
   updatePreferences: (userId, data) =>
-    api.put(`/preferences/${userId}`, data).then((res) => res.data),
+    api.put(ENDPOINTS.PREFERENCES(userId), data).then((res) => res.data),
 
   // Watchlist
   getWatchlist: (userId) =>
-    api.get(`/watchlist/${userId}`).then((res) => res.data),
+    api.get(ENDPOINTS.WATCHLIST(userId)).then((res) => res.data),
 
   syncWatchlist: (userId, movieIds) =>
-    api.post(`/watchlist-sync/${userId}`, { movieIds }).then((res) => res.data),
+    api.post(ENDPOINTS.WATCHLIST_SYNC(userId), { movieIds }).then((res) => res.data),
 
   // History
   getWatchHistory: (userId) =>

@@ -60,7 +60,7 @@ export default function ProfilePage() {
         </h1>
         <p className="text-sm text-white/30 font-medium">Velora Connoisseur since 2024</p>
         
-        {selectedMood && (
+        {selectedMood?.label && (
           <div className="mt-4 px-4 py-1.5 glass rounded-full border-gold/30 text-gold text-xs font-black uppercase tracking-widest">
             Vibe: {selectedMood.label}
           </div>

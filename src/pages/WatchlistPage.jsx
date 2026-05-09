@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useVeloraStore } from "../store/useVeloraStore";
 import { IMAGE_BASE } from "../api/tmdb";
-import { useWatchlistDetails } from "../hooks/useMovieQueries";
+import { useWatchlistMinimal } from "../hooks/useMovieQueries";
 
 const PLACEHOLDER = "https://via.placeholder.com/200x300/111/333?text=No+Image";
 
@@ -40,7 +40,7 @@ export default function WatchlistPage() {
   const { watchlist, removeFromWatchlistAsync, clearWatchlistAsync } = useVeloraStore();
   const [confirmClear, setConfirmClear] = useState(false);
 
-  const watchlistQueries = useWatchlistDetails(watchlist);
+  const watchlistQueries = useWatchlistMinimal(watchlist);
   const fullWatchlist = watchlistQueries
     .map((q) => q.data)
     .filter(Boolean);

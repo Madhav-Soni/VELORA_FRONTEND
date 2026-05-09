@@ -114,12 +114,29 @@ function ActorMovieSection({ actor, onSelect }) {
 
 export default function HomePage() {
   const { onMovieSelect } = useOutletContext() ?? {};
-  const { selectedActors, userId } = useVeloraStore();
+  const { selectedActors, userId, activeMood } = useVeloraStore();
 
   const recommendations = useRecommendations(userId);
   const trending = useTrending();
   const topRated = useTopRated();
   const nowPlaying = useNowPlaying();
+
+  const MOOD_TO_GENRE = {
+    "Action": 28,
+    "Comedy": 35,
+    "Horror": 27,
+    "Romance": 10749,
+    "Sci-Fi": 878,
+    "Thriller": 53
+  };
+
+  const filterMovies = (movies) => {
+    if (!movies) return [];
+    if (activeMood === "All") return movies;
+    const genreId = MOOD_TO_GENRE[activeMood];
+    if (!genreId) return movies;
+    return movies.filter(m => m.genre_ids?.includes(genreId) || m.genres?.some(g => g.id === genreId));
+  };
 
   const heroMovie =
     recommendations.data?.length > 0
@@ -140,21 +157,21 @@ export default function HomePage() {
         {/* 1. Recommended For You */}
         <MovieRow
           title={recommendations.data?.length > 0 ? "Recommended For You" : "Popular Right Now"}
-          movies={recommendations.data?.length > 0 ? recommendations.data : trending.data?.results}
+          movies={filterMovies(recommendations.data?.length > 0 ? recommendations.data : trending.data?.results)}
           loading={recommendations.isLoading || trending.isLoading}
           error={recommendations.isError}
           onSelect={onMovieSelect}
         />
 
         {/* 2. Based on Favorite Actors */}
-        {selectedActors.slice(0, 3).map((actor) => (
+        {activeMood === "All" && selectedActors.slice(0, 3).map((actor) => (
           <ActorMovieSection key={actor.id} actor={actor} onSelect={onMovieSelect} />
         ))}
 
         {/* 3. Trending Now */}
         <MovieRow
           title="Trending Now"
-          movies={trending.data?.results?.slice(1, 13)}
+          movies={filterMovies(trending.data?.results?.slice(1, 20)).slice(0, 12)}
           loading={trending.isLoading}
           error={trending.isError}
           onSelect={onMovieSelect}
@@ -164,7 +181,7 @@ export default function HomePage() {
         {/* 4. Top Rated */}
         <MovieRow
           title="Top Rated"
-          movies={topRated.data?.results?.slice(0, 12)}
+          movies={filterMovies(topRated.data?.results).slice(0, 12)}
           loading={topRated.isLoading}
           error={topRated.isError}
           onSelect={onMovieSelect}
@@ -174,7 +191,7 @@ export default function HomePage() {
         {/* 5. New in Cinemas */}
         <MovieRow
           title="New in Cinemas"
-          movies={nowPlaying.data?.results?.slice(0, 8)}
+          movies={filterMovies(nowPlaying.data?.results).slice(0, 8)}
           loading={nowPlaying.isLoading}
           error={nowPlaying.isError}
           onSelect={onMovieSelect}
