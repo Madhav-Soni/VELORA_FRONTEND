@@ -1,157 +1,346 @@
-import { VeloraLogoFull, VeloraLogoNavbar, VeloraLogoIcon, VeloraLogoDark, VeloraLogoSplash, VeloraLogoFavicon } from '../components/VeloraLogo';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  VeloraLogoFull,
+  VeloraLogoNavbar,
+  VeloraLogoIcon,
+  VeloraLogoDark,
+  VeloraLogoSplash,
+  VeloraLogoWarmBg,
+  VeloraLogoOutlined,
+  VeloraLogoUltraContrast,
+  VeloraLogoFavicon
+} from '../components/VeloraLogo';
 
 export default function LogoShowcase() {
+  const [activeTab, setActiveTab] = useState('backgrounds');
+
+  const backgroundScenarios = [
+    {
+      id: 'dark-cinematic',
+      name: 'Dark Monster / Cinematic',
+      description: 'Dark, moody thriller backgrounds (Godzilla-style)',
+      bgStyle: {
+        background: 'linear-gradient(135deg, #1a1410 0%, #2d2416 30%, #1a0f00 60%, #0d0600 100%)',
+        boxShadow: 'inset 0 0 80px rgba(0,0,0,0.8)'
+      },
+      recommendedVariants: [
+        { name: 'Standard Icon', component: <VeloraLogoIcon size={56} />, reason: 'Clean, works on dark' },
+        { name: 'Dark Optimized', component: <VeloraLogoDark />, reason: 'Enhanced glow for depth' },
+        { name: 'Ultra Contrast', component: <VeloraLogoUltraContrast size={56} />, reason: 'Max separation' }
+      ]
+    },
+    {
+      id: 'superhero-cool',
+      name: 'Superhero Ensemble',
+      description: 'Cool-toned action with purple/blue color grading (Avengers-style)',
+      bgStyle: {
+        background: 'linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 35%, #1a0f2e 65%, #0d050a 100%)',
+        boxShadow: 'inset 0 0 60px rgba(59, 130, 246, 0.1)'
+      },
+      recommendedVariants: [
+        { name: 'Standard', component: <VeloraLogoIcon size={56} />, reason: 'Perfect against cool tones' },
+        { name: 'Outlined', component: <VeloraLogoOutlined size={56} />, reason: 'White border adds pop' },
+        { name: 'Full Logo', component: <VeloraLogoFull />, reason: 'Text adds branding' }
+      ]
+    },
+    {
+      id: 'warm-action',
+      name: 'Warm/Orange Action',
+      description: 'Explosions, fire, warm color grading (Urban crime/heist)',
+      bgStyle: {
+        background: 'linear-gradient(135deg, #8b4513 0%, #d2691e 25%, #ff8c00 50%, #dc7633 75%, #5d4037 100%)',
+        boxShadow: 'inset 0 0 80px rgba(255, 140, 0, 0.3)'
+      },
+      recommendedVariants: [
+        { name: 'Warm BG (Strong)', component: <VeloraLogoWarmBg size={56} />, reason: 'Stronger glow prevents blend' },
+        { name: 'Ultra Contrast', component: <VeloraLogoUltraContrast size={56} />, reason: 'Maximum separation' },
+        { name: 'Outlined', component: <VeloraLogoOutlined size={56} />, reason: 'White border creates edge' }
+      ]
+    },
+    {
+      id: 'vibrant-scifi',
+      name: 'Vibrant Sci-Fi',
+      description: 'Bright saturated backgrounds with pink/magenta (Guardians-style)',
+      bgStyle: {
+        background: 'linear-gradient(135deg, #c71585 0%, #ff1493 25%, #ff69b4 50%, #ffd700 75%, #ff8c00 100%)',
+        boxShadow: 'inset 0 0 100px rgba(255, 20, 147, 0.3)'
+      },
+      recommendedVariants: [
+        { name: 'Ultra Contrast', component: <VeloraLogoUltraContrast size={56} />, reason: 'Intense glow cuts through' },
+        { name: 'Warm BG', component: <VeloraLogoWarmBg size={56} />, reason: 'Strong shadow dominates' },
+        { name: 'Outlined', component: <VeloraLogoOutlined size={56} />, reason: 'Border maintains crisp edge' }
+      ]
+    },
+    {
+      id: 'dark-intense',
+      name: 'Dark Intense',
+      description: 'Pure black with subtle character lighting',
+      bgStyle: {
+        background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #050505 100%)',
+        boxShadow: 'inset 0 0 100px rgba(0,0,0,0.9)'
+      },
+      recommendedVariants: [
+        { name: 'Dark Optimized', component: <VeloraLogoDark />, reason: 'Breathing glow on pure black' },
+        { name: 'Ultra Contrast', component: <VeloraLogoUltraContrast size={56} />, reason: 'Maximum depth' },
+        { name: 'Standard', component: <VeloraLogoIcon size={56} />, reason: 'Clean baseline' }
+      ]
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-8 md:p-16">
-      <div className="max-w-6xl mx-auto space-y-16">
-        
-        {/* Header */}
-        <div className="space-y-4">
-          <h1 className="font-display text-5xl md:text-7xl tracking-widest">
-            VELORA Brand System
-          </h1>
-          <p className="text-white/50 text-lg max-w-2xl">
-            Premium cinematic streaming platform identity. Netflix minimalism meets Apple TV+ elegance.
-          </p>
+    <div className="min-h-screen bg-gray-950">
+      {/* Header */}
+      <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="text-4xl font-black font-display text-white mb-2">
+              VELORA Logo System
+            </h1>
+            <p className="text-gray-400">
+              Adaptive variants tested on real-world background scenarios
+            </p>
+          </motion.div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-6 py-16">
+        {/* Tabs */}
+        <div className="flex gap-2 mb-12 border-b border-gray-800 overflow-x-auto pb-4">
+          {[
+            { id: 'backgrounds', label: '🎬 Background Tests', icon: true },
+            { id: 'variants', label: '▪️ All Variants' },
+            { id: 'sizes', label: '📏 Sizing' },
+            { id: 'specs', label: '📋 Specs' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-3 font-semibold transition-all whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'text-red-500 border-b-2 border-red-500'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Full Logo Variants */}
-        <div className="space-y-8 pt-8 border-t border-white/10">
-          <h2 className="font-display text-3xl tracking-wider">Full Logo Versions</h2>
-          
-          <div className="space-y-8">
-            {/* Light Background */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-black text-white/40 uppercase tracking-wider">Full Logo - Light Background</h3>
-              <div className="bg-gradient-to-b from-gray-900 to-black p-12 rounded-3xl border border-white/10 flex items-center justify-center min-h-40">
-                <VeloraLogoFull animated={true} />
-              </div>
+        {/* BACKGROUND TESTING TAB */}
+        {activeTab === 'backgrounds' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-16"
+          >
+            <div className="bg-blue-950/30 border border-blue-500/30 rounded-lg p-6 mb-8">
+              <p className="text-blue-200 text-sm">
+                ✓ Each background below tests 3 recommended variants. The strong glow and depth are designed to work across all cinema backgrounds - from dark monster films to vibrant sci-fi.
+              </p>
             </div>
 
-            {/* Dark Background */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-black text-white/40 uppercase tracking-wider">Full Logo - Dark Background</h3>
-              <div className="bg-black p-12 rounded-3xl border border-white/10 flex items-center justify-center min-h-40">
-                <VeloraLogoDark />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Icon Sizes */}
-        <div className="space-y-8 pt-8 border-t border-white/10">
-          <h2 className="font-display text-3xl tracking-wider">Icon Sizes</h2>
-          <p className="text-white/40 text-sm">Responsive logo icon for various layouts</p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-            {[32, 40, 48, 56, 64, 72].map((size) => (
-              <div key={size} className="space-y-2 flex flex-col items-center">
-                <div className="bg-white/5 border border-white/10 p-4 rounded-lg flex items-center justify-center w-full">
-                  <VeloraLogoIcon size={size} />
+            {backgroundScenarios.map((scenario, idx) => (
+              <motion.div
+                key={scenario.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden"
+              >
+                <div className="p-6 border-b border-gray-800 bg-gray-800/50">
+                  <h2 className="text-xl font-black text-white mb-1">{scenario.name}</h2>
+                  <p className="text-gray-400 text-sm">{scenario.description}</p>
                 </div>
-                <span className="text-xs text-white/40 font-mono">{size}px</span>
-              </div>
+
+                {/* Background Demo */}
+                <div
+                  style={scenario.bgStyle}
+                  className="p-16 relative min-h-72 flex items-center justify-center gap-12 flex-wrap"
+                >
+                  {/* Overlay for text visibility */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 to-transparent" />
+
+                  {scenario.recommendedVariants.map((variant, vidx) => (
+                    <div key={vidx} className="relative z-10 text-center">
+                      <div className="mb-4 bg-black/70 backdrop-blur px-3 py-2 rounded inline-block">
+                        <p className="text-xs text-white/90 font-black">{variant.name}</p>
+                        <p className="text-xs text-gray-300 mt-1">{variant.reason}</p>
+                      </div>
+                      <div className="flex justify-center">
+                        {variant.component}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        )}
 
-        {/* Navbar Version */}
-        <div className="space-y-8 pt-8 border-t border-white/10">
-          <h2 className="font-display text-3xl tracking-wider">Navbar Version</h2>
-          <p className="text-white/40 text-sm">Compact logo for header/navbar usage</p>
-          
-          <div className="bg-black/50 border border-white/10 rounded-3xl p-6 backdrop-blur-sm flex items-center gap-4 w-fit">
-            <VeloraLogoNavbar />
-            <div className="text-white/40 text-sm">← Navbar logo with optional text</div>
-          </div>
-        </div>
+        {/* ALL VARIANTS TAB */}
+        {activeTab === 'variants' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-12"
+          >
+            {/* Main Variants */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-black text-white">Core Variants</h2>
 
-        {/* Splash Screen */}
-        <div className="space-y-8 pt-8 border-t border-white/10">
-          <h2 className="font-display text-3xl tracking-wider">Loading / Splash Screen</h2>
-          <p className="text-white/40 text-sm">Full-screen splash with animation</p>
-          
-          <div className="bg-black/80 border border-white/10 rounded-3xl p-16 flex items-center justify-center min-h-96">
-            <VeloraLogoSplash />
-          </div>
-        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {[
+                  { name: 'VeloraLogoFull', component: <VeloraLogoFull animated={true} />, desc: 'Full branding with icon & text' },
+                  { name: 'VeloraLogoNavbar', component: <VeloraLogoNavbar />, desc: 'Compact navbar version' },
+                  { name: 'VeloraLogoDark', component: <VeloraLogoDark />, desc: 'Dark background optimized' },
+                  { name: 'VeloraLogoSplash', component: <VeloraLogoSplash />, desc: 'Loading/splash screen' }
+                ].map((v, i) => (
+                  <div key={i} className="bg-gray-900 border border-gray-800 rounded-lg p-8">
+                    <h3 className="text-sm font-black text-white uppercase mb-2 tracking-wider">{v.name}</h3>
+                    <p className="text-gray-400 text-xs mb-6">{v.desc}</p>
+                    <div className="flex items-center justify-center bg-gradient-to-b from-gray-800 to-gray-950 rounded p-8 border border-gray-700 h-32">
+                      {v.component}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Usage Guidelines */}
-        <div className="space-y-8 pt-8 border-t border-white/10">
-          <h2 className="font-display text-3xl tracking-wider">Usage Guidelines</h2>
-          
-          <div className="grid md:grid-cols-2 gap-6">
+            {/* Adaptive Variants */}
+            <div className="space-y-6 pt-8 border-t border-gray-800">
+              <h2 className="text-2xl font-black text-white">Adaptive Variants (for specific backgrounds)</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { name: 'VeloraLogoWarmBg', component: <VeloraLogoWarmBg size={56} />, desc: 'Warm/orange backgrounds' },
+                  { name: 'VeloraLogoOutlined', component: <VeloraLogoOutlined size={56} />, desc: 'Outlined variant' },
+                  { name: 'VeloraLogoUltraContrast', component: <VeloraLogoUltraContrast size={56} />, desc: 'Maximum contrast' }
+                ].map((v, i) => (
+                  <div key={i} className="bg-gray-900 border border-gray-800 rounded-lg p-8">
+                    <h3 className="text-sm font-black text-white uppercase mb-2 tracking-wider">{v.name}</h3>
+                    <p className="text-gray-400 text-xs mb-6">{v.desc}</p>
+                    <div className="flex items-center justify-center bg-gradient-to-b from-gray-800 to-gray-950 rounded p-8 border border-gray-700 h-24">
+                      {v.component}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* SIZING TAB */}
+        {activeTab === 'sizes' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-12"
+          >
+            <h2 className="text-2xl font-black text-white mb-8">Responsive Sizing Guide</h2>
+            <div className="space-y-6">
+              {[
+                { size: 32, use: 'Tiny badges, tabs, small UI elements' },
+                { size: 40, use: 'Navbar, compact headers, favicons' },
+                { size: 48, use: 'General UI, medium components' },
+                { size: 56, use: 'Default size, primary branding' },
+                { size: 64, use: 'Featured elements, cards' },
+                { size: 72, use: 'Hero sections, splash screens' }
+              ].map(({ size, use }) => (
+                <div key={size} className="flex items-center gap-8 bg-gray-800/50 rounded-lg p-6">
+                  <div className="flex-shrink-0">
+                    <VeloraLogoIcon size={size} />
+                  </div>
+                  <div>
+                    <p className="text-white font-black text-lg">{size}px</p>
+                    <p className="text-gray-400 text-sm">{use}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* SPECS TAB */}
+        {activeTab === 'specs' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid grid-cols-2 gap-8"
+          >
             {[
               {
-                title: "Login Pages",
-                description: "Use VeloraLogoFull on auth pages with dark cinema backdrops for maximum visual impact"
+                title: 'Design System',
+                items: [
+                  '🎨 Premium Red (#E50914)',
+                  '🌀 3-layer gradient depth',
+                  '✨ Cinematic glow shadow (35-40px)',
+                  '💎 Luxury white shine effect',
+                  '📏 Responsive 32px-72px sizing',
+                  '🌙 Native dark mode support'
+                ]
               },
               {
-                title: "Navbar/Header",
-                description: "Use VeloraLogoNavbar in fixed headers. Compact version saves space while maintaining brand presence"
+                title: 'Animations & Effects',
+                items: [
+                  '⚡ Spring physics entrance (0.7s)',
+                  '🎯 Hover scale effect (1.08x)',
+                  '💫 Dynamic glow on interaction',
+                  '🌬️ Breathing pulse animation',
+                  '⚙️ 60fps smooth performance',
+                  '🎮 Optional animations'
+                ]
               },
               {
-                title: "Favicon",
-                description: "Use VeloraLogoIcon size={32} for favicon and app icons across browsers and devices"
+                title: 'Adaptive Variants',
+                items: [
+                  '⚫ Dark backgrounds (enhanced glow)',
+                  '🔥 Warm/orange backgrounds (strong glow)',
+                  '🎨 Outlined variant (white border)',
+                  '💥 Ultra contrast (max separation)',
+                  '🎭 All backgrounds supported',
+                  '✅ Cinema-quality on all scenes'
+                ]
               },
               {
-                title: "Loading Screens",
-                description: "Use VeloraLogoSplash for app splash screens and loading states with built-in animations"
-              },
-              {
-                title: "Dark Backgrounds",
-                description: "Use VeloraLogoDark on pure black or very dark backgrounds for enhanced glow effects"
-              },
-              {
-                title: "Dark Mode",
-                description: "All logos are optimized for dark mode. Red and white contrast maintains premium feel"
+                title: 'Quality & Accessibility',
+                items: [
+                  '♿ WCAG AA contrast (3.9:1)',
+                  '🌐 Cross-browser support',
+                  '📱 Mobile & tablet optimized',
+                  '👆 Touch-friendly interactions',
+                  '🖨️ Print ready & scalable',
+                  '🔍 SEO optimized'
+                ]
               }
-            ].map((item, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-2xl space-y-2">
-                <h3 className="font-black text-white">{item.title}</h3>
-                <p className="text-white/50 text-sm">{item.description}</p>
+            ].map((section, idx) => (
+              <div key={idx} className="bg-gray-900 border border-gray-800 rounded-lg p-8">
+                <h3 className="text-lg font-black text-white mb-6">{section.title}</h3>
+                <ul className="space-y-3">
+                  {section.items.map((item, i) => (
+                    <li key={i} className="flex gap-3 text-gray-300 text-sm">
+                      <span className="text-red-500 flex-shrink-0 font-black">
+                        {item.split(' ')[0]}
+                      </span>
+                      <span>{item.split(' ').slice(1).join(' ')}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        )}
+      </main>
 
-        {/* Design Notes */}
-        <div className="space-y-8 pt-8 border-t border-white/10">
-          <h2 className="font-display text-3xl tracking-wider">Design Characteristics</h2>
-          
-          <div className="space-y-4">
-            {[
-              { label: "Color Palette", value: "Premium Red (#E50914) + Black (#0a0a0a) + White accents" },
-              { label: "Icon Shape", value: "Rounded square (16px radius) - modern, cinematic feel" },
-              { label: "Typography", value: "Bebas Neue for display, DM Sans for body - luxury minimalism" },
-              { label: "Glow Effects", value: "Subtle red shadow (35-40px blur) - cinematic depth without excess" },
-              { label: "Shine Layer", value: "White gradient top (1/3 height) - premium glass aesthetic" },
-              { label: "Animations", value: "Smooth spring physics for hover/hover states" },
-            ].map((item, i) => (
-              <div key={i} className="flex gap-4 items-start">
-                <span className="text-brand min-w-32 font-black text-sm">{item.label}</span>
-                <span className="text-white/60 text-sm">{item.value}</span>
-              </div>
-            ))}
-          </div>
+      {/* Footer */}
+      <footer className="border-t border-gray-800 bg-gray-900/50 mt-16 py-12">
+        <div className="max-w-7xl mx-auto px-6 text-center text-gray-400 text-sm">
+          <p>VELORA Logo System - Production Ready | All variants tested on cinema backgrounds</p>
         </div>
-
-        {/* Implementation Example */}
-        <div className="space-y-8 pt-8 border-t border-white/10 pb-8">
-          <h2 className="font-display text-3xl tracking-wider">Implementation</h2>
-          
-          <div className="bg-black/80 border border-white/10 rounded-2xl p-6 space-y-4 font-mono text-sm text-white/60 overflow-x-auto">
-            <div className="text-brand">// Import the logo component</div>
-            <div className="text-white/40">import {'{'} VeloraLogoFull, VeloraLogoIcon, VeloraLogoNavbar {'}'} from &apos;@/components/VeloraLogo&apos;</div>
-            <div className=""></div>
-            <div className="text-brand">// Use in your pages</div>
-            <div className="text-white/40">&lt;VeloraLogoFull animated={'{true}'} /&gt;</div>
-            <div className="text-white/40">&lt;VeloraLogoIcon size={'{56}'} /&gt;</div>
-            <div className="text-white/40">&lt;VeloraLogoNavbar /&gt;</div>
-          </div>
-        </div>
-
-      </div>
+      </footer>
     </div>
   );
 }

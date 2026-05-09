@@ -185,6 +185,129 @@ export function VeloraLogoDark({ className = "" }) {
   );
 }
 
+// ADAPTIVE VARIANTS FOR DIFFERENT BACKGROUNDS
+
+// Warm/Orange Background Optimized (strong glow for blend prevention)
+export function VeloraLogoWarmBg({ size = 56, className = "" }) {
+  const sizeClass = {
+    32: "w-8 h-8",
+    40: "w-10 h-10",
+    48: "w-12 h-12",
+    56: "w-14 h-14",
+    64: "w-16 h-16",
+    72: "w-20 h-20"
+  }[size] || "w-14 h-14";
+
+  const textSize = {
+    32: "text-sm",
+    40: "text-base",
+    48: "text-lg",
+    56: "text-2xl",
+    64: "text-3xl",
+    72: "text-4xl"
+  }[size] || "text-2xl";
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.08 }}
+      className={`relative ${sizeClass} rounded-lg overflow-hidden shadow-[0_0_40px_rgba(239,68,68,0.6),0_0_60px_rgba(239,68,68,0.3)] border border-red-400/40 group cursor-pointer ${className}`}
+    >
+      {/* STRONGER gradient for warm backgrounds */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-red-700 to-red-900" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/8 to-transparent" />
+      {/* ENHANCED shine for visibility */}
+      <div className="absolute top-0 left-0 w-full h-2/5 bg-gradient-to-b from-white/35 to-transparent" />
+      
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        <span className={`font-display text-white ${textSize} tracking-wider drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] font-black`}>
+          V
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+// Outlined/Bordered Variant (for blend-heavy scenes)
+export function VeloraLogoOutlined({ size = 56, className = "" }) {
+  const sizeClass = {
+    32: "w-8 h-8",
+    40: "w-10 h-10",
+    48: "w-12 h-12",
+    56: "w-14 h-14",
+    64: "w-16 h-16",
+    72: "w-20 h-20"
+  }[size] || "w-14 h-14";
+
+  const textSize = {
+    32: "text-sm",
+    40: "text-base",
+    48: "text-lg",
+    56: "text-2xl",
+    64: "text-3xl",
+    72: "text-4xl"
+  }[size] || "text-2xl";
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.08 }}
+      className={`relative ${sizeClass} rounded-lg overflow-hidden shadow-[0_0_30px_rgba(239,68,68,0.5)] border-2 border-white/40 group cursor-pointer ${className}`}
+    >
+      {/* Dark inner with bright outline */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-700 via-red-800 to-red-950" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-white/30 to-transparent" />
+      
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        <span className={`font-display text-white ${textSize} tracking-wider drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] font-black`}>
+          V
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+// Ultra Contrast (for vibrant/saturated backgrounds)
+export function VeloraLogoUltraContrast({ size = 56, className = "" }) {
+  const sizeClass = {
+    32: "w-8 h-8",
+    40: "w-10 h-10",
+    48: "w-12 h-12",
+    56: "w-14 h-14",
+    64: "w-16 h-16",
+    72: "w-20 h-20"
+  }[size] || "w-14 h-14";
+
+  const textSize = {
+    32: "text-sm",
+    40: "text-base",
+    48: "text-lg",
+    56: "text-2xl",
+    64: "text-3xl",
+    72: "text-4xl"
+  }[size] || "text-2xl";
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.08 }}
+      className={`relative ${sizeClass} rounded-lg overflow-hidden shadow-[0_0_50px_rgba(239,68,68,0.7),0_0_80px_rgba(239,68,68,0.4),inset_0_0_20px_rgba(0,0,0,0.5)] border border-red-300/50 group cursor-pointer ${className}`}
+    >
+      {/* Maximum contrast gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-red-700 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/12 to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-2/5 bg-gradient-to-b from-white/40 to-transparent" />
+      
+      {/* Extra dark inner shadow for depth */}
+      <div className="absolute inset-0 shadow-[inset_0_4px_15px_rgba(0,0,0,0.6)]" />
+      
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
+        <span className={`font-display text-white ${textSize} tracking-wider drop-shadow-[0_3px_15px_rgba(0,0,0,0.9),0_0_10px_rgba(255,255,255,0.3)] font-black`}>
+          V
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
 // Loading Screen / Splash Logo
 export function VeloraLogoSplash({ className = "" }) {
   const iconVariants = {
