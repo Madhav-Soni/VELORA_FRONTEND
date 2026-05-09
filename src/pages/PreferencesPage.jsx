@@ -62,7 +62,12 @@ export default function PreferencesPage() {
     if (userId) {
       try {
         await backend.updatePreferences(userId, {
-          favoriteActors: localActors.map(a => a.id),
+          favoriteActors:
+            selectedActors.map(a => ({
+              id: a.id,
+              name: a.name,
+              profile_path: a.profile_path
+            })),
           favoriteGenres: selectedGenres.map(g => g.name),
           selectedMood: selectedMood?.id ?? null
         });
@@ -104,8 +109,8 @@ export default function PreferencesPage() {
 
       {/* Actors section */}
       <section className="mb-20">
-        <SectionHeader 
-          title="Talent Pool" 
+        <SectionHeader
+          title="Talent Pool"
           subtitle={`${selectedActors.length} Icons Followed`}
           action={
             <button
@@ -140,7 +145,7 @@ export default function PreferencesPage() {
               </div>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               key="display"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -185,8 +190,8 @@ export default function PreferencesPage() {
 
       {/* Genres section */}
       <section className="mb-20">
-        <SectionHeader 
-          title="Genre Filter" 
+        <SectionHeader
+          title="Genre Filter"
           subtitle={`${selectedGenres.length} Categories Active`}
         />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -201,11 +206,10 @@ export default function PreferencesPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleToggleGenre(genre)}
-                className={`px-4 py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] border-2 transition-all duration-300 ${
-                  active
+                className={`px-4 py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] border-2 transition-all duration-300 ${active
                     ? "border-brand bg-brand/10 text-white shadow-xl shadow-brand/10"
                     : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white/60 hover:border-white/10"
-                }`}
+                  }`}
               >
                 {genre.name}
               </motion.button>
@@ -216,8 +220,8 @@ export default function PreferencesPage() {
 
       {/* Mood section */}
       <section>
-        <SectionHeader 
-          title="Atmosphere" 
+        <SectionHeader
+          title="Atmosphere"
           subtitle="Real-time Vibe Calibration"
         />
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -243,11 +247,10 @@ export default function PreferencesPage() {
                     }
                   }
                 }}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                  active
+                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${active
                     ? "border-gold bg-gold/10 text-gold"
                     : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white hover:border-white/10"
-                }`}
+                  }`}
               >
                 <span className="text-2xl">{m.icon}</span>
                 <span className={`text-[10px] font-black uppercase tracking-widest ${active ? "text-gold" : "text-white/40"}`}>

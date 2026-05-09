@@ -44,6 +44,7 @@ export default function OnboardingPage() {
   const [genres, setGenres] = useState([]);
   const [mood, setMood] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleGenre = (genre) => {
     setGenres((prev) =>
@@ -55,6 +56,7 @@ export default function OnboardingPage() {
 
   const handleFinish = async () => {
     setLoading(true);
+    setError("");
     try {
       if (userId) {
         await backend.updatePreferences(userId, {
@@ -68,13 +70,9 @@ export default function OnboardingPage() {
       setSelectedMood(mood);
       setIsOnboarded(true);
       navigate("/home");
-    } catch (error) {
-      console.error("Failed to save preferences:", error);
-      setSelectedActors(actors);
-      setSelectedGenres(genres);
-      setSelectedMood(mood);
-      setIsOnboarded(true);
-      navigate("/home");
+    } catch (err) {
+      console.error("Failed to save preferences:", err);
+      setError("Failed to save your selection. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -204,6 +202,17 @@ export default function OnboardingPage() {
             {current.content}
           </motion.div>
         </AnimatePresence>
+
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="mb-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold text-center"
+          >
+            {error}
+          </motion.div>
+        )}
 
         {/* Navigation */}
         <div className="flex gap-3 mt-8 pt-4 border-t border-[#1a1a1a]">
