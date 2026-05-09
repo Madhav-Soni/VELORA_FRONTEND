@@ -41,12 +41,8 @@ export default function AppLayout() {
     backend
       .getWatchlist(userId)
       .then((ids) => {
-        if (!ids || ids.length === 0) {
-          skipSyncRef.current = false;
-          return;
-        }
         // Store only basic objects with IDs to avoid overfetching
-        const basicMovies = ids.map((id) => (typeof id === "object" ? id : { id }));
+        const basicMovies = (ids || []).map((id) => (typeof id === "object" ? id : { id }));
         setWatchlist(basicMovies);
         // Allow outgoing sync after hydration settles
         setTimeout(() => { skipSyncRef.current = false; }, 0);

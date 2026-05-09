@@ -64,7 +64,7 @@ export default function PreferencesPage() {
         await backend.updatePreferences(userId, {
           favoriteActors: localActors.map(a => a.id),
           favoriteGenres: selectedGenres.map(g => g.name),
-          selectedMood: selectedMood
+          selectedMood: selectedMood?.id ?? null
         });
       } catch (err) {
         console.error("Failed to sync actors:", err);
@@ -84,7 +84,7 @@ export default function PreferencesPage() {
         await backend.updatePreferences(userId, {
           favoriteActors: selectedActors.map(a => a.id),
           favoriteGenres: nextGenres.map(g => g.name),
-          selectedMood: selectedMood
+          selectedMood: selectedMood?.id ?? null
         });
       } catch (err) {
         console.error("Failed to sync genres:", err);
@@ -236,7 +236,7 @@ export default function PreferencesPage() {
                       await backend.updatePreferences(userId, {
                         favoriteActors: selectedActors.map(a => a.id),
                         favoriteGenres: selectedGenres.map(g => g.name),
-                        selectedMood: nextMood
+                        selectedMood: nextMood?.id ?? null
                       });
                     } catch (err) {
                       console.error("Failed to sync mood:", err);

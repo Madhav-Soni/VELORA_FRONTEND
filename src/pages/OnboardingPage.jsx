@@ -60,7 +60,7 @@ export default function OnboardingPage() {
         await backend.updatePreferences(userId, {
           favoriteActors: actors.map(a => ({ id: a.id, name: a.name, profile_path: a.profile_path })),
           favoriteGenres: genres.map(g => g.name),
-          selectedMood: mood
+          selectedMood: mood?.id ?? null
         });
       }
       setSelectedActors(actors);

@@ -41,7 +41,7 @@ export const ENDPOINTS = {
   PREFERENCES: (userId) => `/preferences/${userId}`,
   WATCHLIST: (userId) => `/watchlist/${userId}`,
   WATCHLIST_SYNC: (userId) => `/watchlist-sync/${userId}`,
-  HISTORY: (userId) => `/history/${userId}`,
+  HISTORY: (userId) => `/watch-history/${userId}`,
 };
 
 // ── public API ───────────────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ export const backend = {
 
   // History
   getWatchHistory: (userId) =>
-    api.get(`/watched/${userId}`).then((res) => res.data),
+    api.get(ENDPOINTS.HISTORY(userId)).then((res) => res.data),
 
   addToWatchHistory: (userId, movieId) =>
     api.post(`/watched/${userId}`, { movieId }).then((res) => res.data),
