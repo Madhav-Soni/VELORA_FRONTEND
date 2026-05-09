@@ -5,6 +5,7 @@ import { useRecommendations } from "../hooks/useBackend";
 import { useCineStore } from "../store/useCineStore";
 import ScrollRow from "../components/ScrollRow";
 import MovieCard from "../components/MovieCard";
+import MovieRow from "../components/MovieRow";
 import { BACKDROP_BASE } from "../api/tmdb";
 
 const BACKDROP_PLACEHOLDER = "https://via.placeholder.com/1280x720/080808/080808";
@@ -99,56 +100,17 @@ function ActorMovieSection({ actor, onSelect }) {
   if (!actor) return null;
   const movies = data?.cast?.slice(0, 12) ?? [];
   return (
-    <ScrollRow title={`Because You Like ${actor.name}`} accent="gold" loading={isLoading} error={isError}>
-      {movies.map((m, i) => <MovieCard key={m.id} movie={m} index={i} onSelect={onSelect} />)}
-    </ScrollRow>
+    <MovieRow 
+      title={`Because You Like ${actor.name}`} 
+      movies={movies}
+      onSelect={onSelect}
+      loading={isLoading}
+      error={isError}
+      accent="gold"
+    />
   );
 }
 
-/** Shows the recommendations row with graceful empty/error states */
-function RecommendationsRow({ userId, onMovieSelect }) {
-  const recommendations = useRecommendations(userId);
-  const trending = useTrending();
-
-  // Still loading — show skeleton row
-  if (recommendations.isLoading) {
-    return (
-      <ScrollRow title="Recommended For You" accent="brand" loading={true} />
-    );
-  }
-
-  // Has recommendations from backend
-  if (recommendations.data?.length > 0) {
-    return (
-      <ScrollRow
-        title="Recommended For You"
-        accent="brand"
-        loading={false}
-        error={recommendations.isError}
-        onSeeAll={() => {}}
-      >
-        {recommendations.data.slice(0, 12).map((m, i) => (
-          <MovieCard key={m._id || m.id} movie={m} index={i} onSelect={onMovieSelect} />
-        ))}
-      </ScrollRow>
-    );
-  }
-
-  // Empty backend recommendations — fallback to trending with a note
-  return (
-    <ScrollRow
-      title="Popular Right Now"
-      accent="brand"
-      loading={trending.isLoading}
-      error={trending.isError}
-      onSeeAll={() => {}}
-    >
-      {trending.data?.results?.slice(0, 12).map((m, i) => (
-        <MovieCard key={m.id} movie={m} index={i} onSelect={onMovieSelect} />
-      ))}
-    </ScrollRow>
-  );
-}
 
 export default function HomePage() {
   const { onMovieSelect } = useOutletContext() ?? {};
@@ -175,8 +137,14 @@ export default function HomePage() {
 
       {/* Rows */}
       <div className="mt-4 space-y-4">
-        {/* 1. Recommended For You (always visible — falls back to trending) */}
-        {userId && <RecommendationsRow userId={userId} onMovieSelect={onMovieSelect} />}
+        {/* 1. Recommended For You */}
+        <MovieRow
+          title={recommendations.data?.length > 0 ? "Recommended For You" : "Popular Right Now"}
+          movies={recommendations.data?.length > 0 ? recommendations.data : trending.data?.results}
+          loading={recommendations.isLoading || trending.isLoading}
+          error={recommendations.isError}
+          onSelect={onMovieSelect}
+        />
 
         {/* 2. Based on Favorite Actors */}
         {selectedActors.slice(0, 3).map((actor) => (
@@ -184,41 +152,33 @@ export default function HomePage() {
         ))}
 
         {/* 3. Trending Now */}
-        <ScrollRow
+        <MovieRow
           title="Trending Now"
-          accent="red"
+          movies={trending.data?.results?.slice(1, 13)}
           loading={trending.isLoading}
           error={trending.isError}
-          onSeeAll={() => {}}
-        >
-          {trending.data?.results?.slice(1, 13).map((m, i) => (
-            <MovieCard key={m.id} movie={m} index={i} onSelect={onMovieSelect} />
-          ))}
-        </ScrollRow>
+          onSelect={onMovieSelect}
+          accent="red"
+        />
 
         {/* 4. Top Rated */}
-        <ScrollRow
+        <MovieRow
           title="Top Rated"
-          accent="gold"
+          movies={topRated.data?.results?.slice(0, 12)}
           loading={topRated.isLoading}
           error={topRated.isError}
-        >
-          {topRated.data?.results?.slice(0, 12).map((m, i) => (
-            <MovieCard key={m.id} movie={m} index={i} onSelect={onMovieSelect} />
-          ))}
-        </ScrollRow>
+          onSelect={onMovieSelect}
+          accent="gold"
+        />
 
         {/* 5. New in Cinemas */}
-        <ScrollRow
+        <MovieRow
           title="New in Cinemas"
-          accent="brand"
+          movies={nowPlaying.data?.results?.slice(0, 8)}
           loading={nowPlaying.isLoading}
           error={nowPlaying.isError}
-        >
-          {nowPlaying.data?.results?.slice(0, 8).map((m, i) => (
-            <MovieCard key={m.id} movie={m} index={i} onSelect={onMovieSelect} />
-          ))}
-        </ScrollRow>
+          onSelect={onMovieSelect}
+        />
       </div>
     </div>
   );
