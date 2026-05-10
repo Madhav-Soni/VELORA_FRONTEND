@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MovieSkeleton = () => (
@@ -22,35 +22,39 @@ export default function ScrollRow({
   skeletonType = "movie"
 }) {
   const scrollRef = useRef(null);
+  const isPointerInsideRef = useRef(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const checkScroll = () => {
+  const checkScroll = useCallback(() => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
       setCanScrollLeft(scrollLeft > 10);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkScroll();
     window.addEventListener("resize", checkScroll);
     return () => window.removeEventListener("resize", checkScroll);
-  }, [children, loading]);
+  }, [checkScroll, children, loading]);
 
-  useEffect(() => {
+  const handleWheel = useCallback((e) => {
     const el = scrollRef.current;
-    if (!el) return;
-    const handleWheel = (e) => {
-      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) {
-        e.preventDefault();
-        el.scrollLeft += e.deltaX;
-      }
-    };
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
-  }, []);
+    if (!el || !isPointerInsideRef.current) return;
+
+    const horizontalDelta = e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)
+      ? e.deltaY
+      : e.deltaX;
+
+    if (Math.abs(horizontalDelta) < 1) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    el.scrollLeft += horizontalDelta;
+    checkScroll();
+  }, [checkScroll]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -136,13 +140,16 @@ export default function ScrollRow({
         <div
           ref={scrollRef}
           onScroll={checkScroll}
+          onPointerEnter={() => { isPointerInsideRef.current = true; }}
+          onPointerLeave={() => { isPointerInsideRef.current = false; }}
+          onWheel={handleWheel}
           className="flex gap-4 overflow-x-auto px-6 sm:px-8 pb-6 scrollbar-hide"
           style={{
             overscrollBehaviorX: "contain",
-            touchAction: "pan-x",
+            overscrollBehaviorY: "auto",
+            touchAction: "pan-y pinch-zoom",
             WebkitOverflowScrolling: "auto",
           }}
-          
         >
           {loading ? (
             Array.from({ length: 8 }).map((_, i) => (
