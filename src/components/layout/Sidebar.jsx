@@ -58,13 +58,23 @@ export default function Sidebar() {
             <div className="px-6 pt-10 pb-12">
               <div className="flex items-center gap-3 group/logo cursor-pointer">
                 <div className="relative w-9 h-9 flex-shrink-0">
-                  <div className="absolute inset-0 bg-brand/20 blur-lg rounded-full group-hover/logo:bg-brand/40 transition-all duration-500" />
-                  <div className="relative w-full h-full rounded-full bg-[#0a0a0a] border border-white/10 flex items-center justify-center overflow-hidden shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent" />
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-brand relative z-10" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 3l7 14 7-14" />
-                      <path d="M12 17v4" className="opacity-40" />
-                      <circle cx="12" cy="12" r="10" stroke="white" strokeOpacity="0.05" strokeWidth="1" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand/30 to-orange-500/10 blur-xl rounded-full group-hover/logo:from-brand/50 transition-all duration-500" />
+                  <div className="relative w-full h-full rounded-full bg-[#0d0d0d] border border-brand/25 flex items-center justify-center overflow-hidden shadow-[0_0_20px_rgba(229,9,20,0.15)]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand/15 via-transparent to-orange-500/5" />
+                    <svg viewBox="0 0 32 32" className="w-5 h-5 relative z-10" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="16" cy="16" r="14" fill="none" stroke="url(#vring)" strokeWidth="1.5" strokeOpacity="0.6" />
+                      <path d="M13 10.5l7 5.5-7 5.5V10.5z" fill="url(#vgrad)" />
+                      <path d="M10 9l6 9 6-9" fill="none" stroke="url(#vring)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.5" />
+                      <defs>
+                        <linearGradient id="vgrad" x1="13" y1="10.5" x2="20" y2="21.5" gradientUnits="userSpaceOnUse">
+                          <stop offset="0%" stopColor="#E50914" />
+                          <stop offset="100%" stopColor="#ff6b35" />
+                        </linearGradient>
+                        <linearGradient id="vring" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                          <stop offset="0%" stopColor="#E50914" stopOpacity="0.8" />
+                          <stop offset="100%" stopColor="#ff6b35" stopOpacity="0.3" />
+                        </linearGradient>
+                      </defs>
                     </svg>
                   </div>
                 </div>

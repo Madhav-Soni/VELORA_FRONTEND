@@ -156,7 +156,7 @@ export default function Topbar({ onMovieSelect }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.98 }}
               transition={{ type: "spring", damping: 25, stiffness: 400 }}
-              className="absolute top-full left-0 right-0 mt-4 glass-dark rounded-[2rem] overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.6)] border border-white/10 z-[70] max-h-[70vh] overflow-y-auto scrollbar-hide"
+              className="absolute top-full left-0 right-0 mt-4 bg-[#0d0d0d] backdrop-blur-2xl rounded-[2rem] overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.95)] border border-white/10 z-[70] max-h-[70vh] overflow-y-auto scrollbar-hide"
             >
               {suggestions.length === 0 && !isFetching ? (
                 <div className="py-16 text-center flex flex-col items-center">
