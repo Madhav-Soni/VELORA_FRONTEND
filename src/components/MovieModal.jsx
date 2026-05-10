@@ -17,8 +17,9 @@ const MetaBadge = ({ children, icon, color = "text-white/40" }) => (
 
 export default function MovieModal({ movieId, onClose }) {
   const { data: movie, isLoading } = useMovieDetails(movieId);
-  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist } = useVeloraStore();
+  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist, addToFavorites, removeFromFavorites, isInFavorites } = useVeloraStore();
   const inWatchlist = movie ? isInWatchlist(movie.id) : false;
+  const inFavorites = movie ? isInFavorites(movie.id) : false;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -67,13 +68,13 @@ export default function MovieModal({ movieId, onClose }) {
             {isLoading ? (
               <div className="w-full h-full skeleton" />
             ) : movie?.backdrop_path ? (
-              <motion.img 
+              <motion.img
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 1.2 }}
-                src={`${BACKDROP_BASE}${movie.backdrop_path}`} 
-                className="w-full h-full object-cover" 
-                alt="" 
+                src={`${BACKDROP_BASE}${movie.backdrop_path}`}
+                className="w-full h-full object-cover"
+                alt=""
               />
             ) : (
               <div className="w-full h-full bg-[#111]" />
@@ -112,7 +113,7 @@ export default function MovieModal({ movieId, onClose }) {
                     <h2 className="text-3xl sm:text-4xl font-black text-white leading-tight font-display mb-3 tracking-wide">
                       {movie?.title}
                     </h2>
-                    
+
                     <div className="flex flex-wrap items-center gap-2 mb-6">
                       {movie?.vote_average > 0 && (
                         <MetaBadge icon="★" color="text-gold">
@@ -148,7 +149,7 @@ export default function MovieModal({ movieId, onClose }) {
                           rel="noreferrer"
                           className="flex items-center gap-2 px-6 py-3 bg-white/90 text-black text-sm font-black uppercase tracking-wider rounded-2xl transition-colors"
                         >
-                          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                           Play Trailer
                         </motion.a>
                       )}
@@ -156,16 +157,29 @@ export default function MovieModal({ movieId, onClose }) {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => inWatchlist ? removeFromWatchlistAsync(movie.id) : addToWatchlistAsync(movie)}
-                        className={`flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-wider rounded-2xl border-2 transition-all duration-300 ${
-                          inWatchlist
-                            ? "bg-brand/10 border-brand text-brand"
-                            : "bg-white/5 border-white/10 text-white/80 hover:border-white/30 hover:text-white"
-                        }`}
+                        className={`flex items-center gap-2 px-6 py-3 text-sm font-black uppercase tracking-wider rounded-2xl border-2 transition-all duration-300 ${inWatchlist
+                          ? "bg-brand/10 border-brand text-brand"
+                          : "bg-white/5 border-white/10 text-white/80 hover:border-white/30 hover:text-white"
+                          }`}
                       >
                         <svg viewBox="0 0 24 24" fill={inWatchlist ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" width="16" height="16">
                           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                         </svg>
                         {inWatchlist ? "Saved" : "Watchlist"}
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => inFavorites ? removeFromFavorites(movie.id) : addToFavorites(movie)}
+                        className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-[0.15em] border-2 transition-all duration-300 ${inFavorites
+                            ? "bg-pink-500/20 border-pink-500 text-pink-400"
+                            : "bg-white/5 border-white/10 text-white/60 hover:border-pink-500/50 hover:text-pink-400"
+                          }`}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill={inFavorites ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                        {inFavorites ? "Favorited" : "Favorite"}
                       </motion.button>
                     </div>
                   </>

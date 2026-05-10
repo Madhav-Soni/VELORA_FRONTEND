@@ -93,18 +93,31 @@ export default function OnboardingPage() {
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E50914] via-[#ff6b6b] to-[#E50914]" />
 
       <div className="flex-1 flex flex-col max-w-xl mx-auto w-full px-4 py-10">
-        {/* Logo */}
-        <p
-          className="text-center text-2xl mb-8"
-          style={{
-            fontFamily: "'Bebas Neue', cursive",
-            background: "linear-gradient(135deg, #E50914, #ff6b6b)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          VELORA
-        </p>
+        <div className="flex flex-col items-center mb-12 group/logo">
+          <div className="relative w-16 h-16 mb-4">
+            <div className="absolute inset-0 bg-brand/20 blur-xl rounded-full group-hover/logo:bg-brand/40 transition-all duration-700" />
+            <div className="relative w-full h-full rounded-full bg-black border border-white/10 flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(229,9,20,0.2)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-brand/20 to-transparent" />
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-8 h-8 text-brand relative z-10" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 3l7 14 7-14" />
+                <path d="M12 17v4" className="opacity-40" />
+                <circle cx="12" cy="12" r="10" stroke="white" strokeOpacity="0.05" strokeWidth="1" />
+              </svg>
+            </div>
+          </div>
+          <p
+            className="text-center text-4xl"
+            style={{
+              fontFamily: "'Bebas Neue', cursive",
+              background: "linear-gradient(135deg, #E50914, #ff6b6b)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              letterSpacing: "0.1em"
+            }}
+          >
+            VELORA
+          </p>
+        </div>
 
         {/* Progress */}
         <div className="flex gap-2 mb-8">

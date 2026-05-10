@@ -110,6 +110,24 @@ export const useVeloraStore = create(
       isInWatchlist: (movieId) => get().watchlist.some((m) => m.id === movieId),
 
       clearWatchlist: () => set({ watchlist: [] }),
+      // ── favorites ─────────────────────────────────────────────────────────
+      favorites: [],
+
+      addToFavorites: (movie) =>
+        set((state) => ({
+          favorites: state.favorites.find((m) => m.id === movie.id)
+            ? state.favorites
+            : [{ ...movie, favoritedAt: Date.now() }, ...state.favorites],
+        })),
+
+      removeFromFavorites: (movieId) =>
+        set((state) => ({
+          favorites: state.favorites.filter((m) => m.id !== movieId),
+        })),
+
+      isInFavorites: (movieId) => get().favorites.some((m) => m.id === movieId),
+
+      clearFavorites: () => set({ favorites: [] }),
 
       // ── async sync actions ───────────────────────────────────────────────
       syncWatchlistWithBackend: async () => {
@@ -239,6 +257,7 @@ export const useVeloraStore = create(
           token: null,
           userName: null,
           watchlist: [],
+          favorites: [],
         }),
     }),
     { 

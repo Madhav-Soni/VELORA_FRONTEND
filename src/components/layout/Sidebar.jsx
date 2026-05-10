@@ -56,10 +56,23 @@ export default function Sidebar() {
 
             {/* Logo */}
             <div className="px-6 pt-10 pb-12">
-              <span className="text-2xl font-black font-display text-gradient-red tracking-wider block">
-                VELORA
-              </span>
-              <p className="text-[9px] font-black text-white/20 tracking-[0.3em] uppercase mt-1">Curated for your vibe</p>
+              <div className="flex items-center gap-3 group/logo cursor-pointer">
+                <div className="relative w-9 h-9 flex-shrink-0">
+                  <div className="absolute inset-0 bg-brand/20 blur-lg rounded-full group-hover/logo:bg-brand/40 transition-all duration-500" />
+                  <div className="relative w-full h-full rounded-full bg-[#0a0a0a] border border-white/10 flex items-center justify-center overflow-hidden shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5 text-brand relative z-10" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 3l7 14 7-14" />
+                      <path d="M12 17v4" className="opacity-40" />
+                      <circle cx="12" cy="12" r="10" stroke="white" strokeOpacity="0.05" strokeWidth="1" />
+                    </svg>
+                  </div>
+                </div>
+                <span className="text-2xl font-black font-display text-gradient-red tracking-wider block">
+                  VELORA
+                </span>
+              </div>
+              <p className="text-[9px] font-black text-white/20 tracking-[0.3em] uppercase mt-2">Curated for your vibe</p>
             </div>
 
             {/* Nav */}

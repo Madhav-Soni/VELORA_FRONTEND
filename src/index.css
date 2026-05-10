@@ -43,6 +43,13 @@
     border: 1px solid rgba(255,255,255,0.06);
   }
 
+  .glass-dark {
+    background: rgba(8, 8, 8, 0.9);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
   /* Hover lift */
   .hover-lift {
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;

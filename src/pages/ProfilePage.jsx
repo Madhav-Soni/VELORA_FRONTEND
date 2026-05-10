@@ -111,7 +111,7 @@ export default function ProfilePage() {
 
       {/* Action List */}
       <div className="space-y-3 pt-12 border-t border-white/5">
-        <ActionButton icon="⚙️" label="Edit AI Preferences" onClick={() => navigate("/preferences")} />
+        <ActionButton icon="⚙️" label="Edit Preferences" onClick={() => navigate("/preferences")} />
         <ActionButton icon="🔖" label="Manage Watchlist" onClick={() => navigate("/watchlist")} />
         <ActionButton icon="🎬" label="Reset Onboarding" onClick={() => { setIsOnboarded(false); navigate("/onboarding"); }} />
         <div className="pt-4">
