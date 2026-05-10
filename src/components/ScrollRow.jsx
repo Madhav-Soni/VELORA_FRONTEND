@@ -39,6 +39,19 @@ export default function ScrollRow({
     return () => window.removeEventListener("resize", checkScroll);
   }, [children, loading]);
 
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleWheel = (e) => {
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaX;
+      }
+    };
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, []);
+
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { clientWidth } = scrollRef.current;
@@ -58,7 +71,7 @@ export default function ScrollRow({
       className="py-6 relative group/row"
       style={{ willChange: "auto" }}
     >
-    
+
       <div className="flex items-center justify-between px-6 sm:px-8 mb-5">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
@@ -129,14 +142,7 @@ export default function ScrollRow({
             touchAction: "pan-x",
             WebkitOverflowScrolling: "auto",
           }}
-          onWheel={(e) => {
-            const el = scrollRef.current;
-            if (!el) return;
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-              e.stopPropagation();
-              el.scrollLeft += e.deltaX;
-            }
-          }}
+          
         >
           {loading ? (
             Array.from({ length: 8 }).map((_, i) => (
