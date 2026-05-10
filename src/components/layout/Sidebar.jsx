@@ -58,23 +58,14 @@ export default function Sidebar() {
             <div className="px-6 pt-10 pb-12">
               <div className="flex items-center gap-3 group/logo cursor-pointer">
                 <div className="relative w-9 h-9 flex-shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand/30 to-orange-500/10 blur-xl rounded-full group-hover/logo:from-brand/50 transition-all duration-500" />
-                  <div className="relative w-full h-full rounded-full bg-[#0d0d0d] border border-brand/25 flex items-center justify-center overflow-hidden shadow-[0_0_20px_rgba(229,9,20,0.15)]">
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand/15 via-transparent to-orange-500/5" />
-                    <svg viewBox="0 0 32 32" className="w-5 h-5 relative z-10" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="16" cy="16" r="14" fill="none" stroke="url(#vring)" strokeWidth="1.5" strokeOpacity="0.6" />
-                      <path d="M13 10.5l7 5.5-7 5.5V10.5z" fill="url(#vgrad)" />
-                      <path d="M10 9l6 9 6-9" fill="none" stroke="url(#vring)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.5" />
-                      <defs>
-                        <linearGradient id="vgrad" x1="13" y1="10.5" x2="20" y2="21.5" gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor="#E50914" />
-                          <stop offset="100%" stopColor="#ff6b35" />
-                        </linearGradient>
-                        <linearGradient id="vring" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                          <stop offset="0%" stopColor="#E50914" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="#ff6b35" stopOpacity="0.3" />
-                        </linearGradient>
-                      </defs>
+                  <div className="absolute -inset-1 bg-brand/40 blur-xl rounded-full group-hover/logo:bg-brand/60 transition-all duration-500" />
+                  <div className="relative w-full h-full rounded-full flex items-center justify-center overflow-hidden shadow-[0_0_24px_rgba(229,9,20,0.4)]"
+                    style={{ background: "linear-gradient(135deg, #E50914 0%, #c40812 50%, #8a0000 100%)" }}>
+                    {/* Gloss overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent" />
+                    {/* Filled V mark */}
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 relative z-10" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 4l7 13 7-13" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
                 </div>

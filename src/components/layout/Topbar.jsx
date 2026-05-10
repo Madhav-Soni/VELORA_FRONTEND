@@ -117,7 +117,7 @@ export default function Topbar({ onMovieSelect }) {
       >
         <div className={`flex items-center gap-3 px-5 py-3 rounded-[1.25rem] bg-white/[0.03] border transition-all duration-300 ${isSearchActive ? "bg-white/[0.07] border-brand shadow-[0_0_20px_rgba(229,9,20,0.15)]" : "border-white/5 hover:border-white/10"
           }`}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18" className={`transition-colors duration-300 ${isSearchActive ? "text-brand" : "text-white/20"} flex-shrink-0`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18" className={`transition-colors duration-300 ${isSearchActive ? "text-brand" : "text-white/40"} flex-shrink-0`}>
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input
