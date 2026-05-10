@@ -26,7 +26,7 @@ export default function AppLayout() {
   // ── 2. Hydrate watchlist & prefs FROM backend on login ────────────────────────────
   useEffect(() => {
     let isCancelled = false;
-    
+
     if (!userId) {
       hydratedRef.current = false;
       skipSyncRef.current = true;
@@ -50,8 +50,8 @@ export default function AppLayout() {
         const basicMovies = (ids || []).map((id) => (typeof id === "object" ? id : { id }));
         setWatchlist(basicMovies);
         // Allow outgoing sync after hydration settles
-        setTimeout(() => { 
-          if (!isCancelled) skipSyncRef.current = false; 
+        setTimeout(() => {
+          if (!isCancelled) skipSyncRef.current = false;
         }, 0);
       })
       .catch((err) => {
@@ -78,10 +78,9 @@ export default function AppLayout() {
       <Sidebar />
       <div className="flex-1 md:ml-[210px] flex flex-col min-h-screen relative">
         <Topbar onMovieSelect={setSelectedMovieId} />
-        <main className="flex-1 pt-[72px] overflow-x-hidden">
-          <div className="relative z-0">
-            <Outlet context={{ onMovieSelect: setSelectedMovieId }} />
-          </div>
+        <main className="flex-1 pt-[72px]">          <div className="relative z-0">
+          <Outlet context={{ onMovieSelect: setSelectedMovieId }} />
+        </div>
         </main>
       </div>
 
