@@ -58,17 +58,6 @@
 }
 
 /* Snap scroll */
-.snap-row {
-  scroll-snap-type: x mandatory;
-  overscroll-behavior-x: contain;
-  touch-action: pan-x;
-  isolation: isolate;
-  overscroll-behavior-x: contain;
-  touch-action: pan-x;
-}
-.snap-row > * {
-  scroll-snap-align: start;
-}
 
 /* Sidebar mobile hidden */
 @media (max-width: 768px) {
