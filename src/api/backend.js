@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useVeloraStore } from "../store/useVeloraStore";
+import { queryClient } from "../App";
 
 export const BACKEND_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
@@ -26,6 +27,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      queryClient.clear();
       useVeloraStore.getState().logout();
       // Optionally redirect or show message
     }

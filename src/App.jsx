@@ -16,7 +16,7 @@ import TrendingPage from "./pages/TrendingPage";
 import FavoritesPage from "./pages/FavoritesPage";
 
 // ── TanStack Query client ────────────────────────────────────────────────────
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, refetchOnWindowFocus: false },
   },

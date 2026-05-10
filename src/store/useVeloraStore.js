@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { backend } from "../api/backend";
+import { queryClient } from "../App";
 
 export const GENRES = [
   { id: 28, name: "Action" },
@@ -53,7 +54,9 @@ export const useVeloraStore = create(
             : (currentName || null),
         });
       },
-      logout: () =>
+      logout: () => {
+        // Clear all cached queries to prevent data leaking to next user
+        if (queryClient) queryClient.clear();
         set({
           userId: null,
           token: null,
@@ -64,7 +67,8 @@ export const useVeloraStore = create(
           selectedMood: null,
           activeMood: "All",
           watchlist: [],
-        }),
+        });
+      },
 
       // ── onboarding / preferences ──────────────────────────────────────────
       selectedActors: [],
