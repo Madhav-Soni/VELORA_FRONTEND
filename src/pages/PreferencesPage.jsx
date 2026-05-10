@@ -1,28 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useVeloraStore } from "../store/useVeloraStore";
+import { useVeloraStore, GENRES, MOODS } from "../store/useVeloraStore";
 import ActorPicker from "../components/ActorPicker";
 import { IMAGE_BASE } from "../api/tmdb";
 import { backend } from "../api/backend";
-
-const GENRES = [
-  { id: 28, name: "Action" }, { id: 12, name: "Adventure" },
-  { id: 16, name: "Animation" }, { id: 35, name: "Comedy" },
-  { id: 80, name: "Crime" }, { id: 99, name: "Documentary" },
-  { id: 18, name: "Drama" }, { id: 14, name: "Fantasy" },
-  { id: 27, name: "Horror" }, { id: 9648, name: "Mystery" },
-  { id: 10749, name: "Romance" }, { id: 878, name: "Sci-Fi" },
-  { id: 53, name: "Thriller" }, { id: 37, name: "Western" },
-];
-
-const MOODS = [
-  { id: "relaxed", label: "Relaxed", icon: "😌" },
-  { id: "excited", label: "Excited", icon: "🤩" },
-  { id: "melancholy", label: "Melancholy", icon: "😢" },
-  { id: "tense", label: "Tense", icon: "😰" },
-  { id: "romantic", label: "Romantic", icon: "🥰" },
-  { id: "thoughtful", label: "Thoughtful", icon: "🤔" },
-];
 
 const SectionHeader = ({ title, subtitle, action }) => (
   <div className="flex items-end justify-between mb-8">
@@ -78,6 +59,26 @@ export default function PreferencesPage() {
     setShowActorPicker(false);
     setShowSavedToast(true);
     setTimeout(() => setShowSavedToast(false), 2500);
+  };
+
+  const handleRemoveActor = async (actorId) => {
+    const nextActors = selectedActors.filter((a) => a.id !== actorId);
+    setSelectedActors(nextActors);
+    if (userId) {
+      try {
+        await backend.updatePreferences(userId, {
+          favoriteActors: nextActors.map(a => ({
+            id: a.id,
+            name: a.name,
+            profile_path: a.profile_path ?? null
+          })),
+          favoriteGenres: selectedGenres.map(g => g.name),
+          selectedMood: selectedMood?.id ?? null
+        });
+      } catch (err) {
+        console.error("Failed to sync actor removal:", err);
+      }
+    }
   };
 
   const handleToggleGenre = async (genre) => {
@@ -179,7 +180,7 @@ export default function PreferencesPage() {
                     </div>
                     <span className="text-[11px] font-bold text-white/50 group-hover:text-white transition-colors">{actor.name}</span>
                     <button
-                      onClick={() => setSelectedActors(selectedActors.filter((a) => a.id !== actor.id))}
+                      onClick={() => handleRemoveActor(actor.id)}
                       className="w-5 h-5 flex items-center justify-center rounded-full bg-white/5 text-white/20 hover:bg-brand hover:text-white transition-all ml-1"
                     >
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="10" height="10">

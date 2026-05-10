@@ -36,7 +36,7 @@ const ActionButton = ({ label, icon, onClick, variant = "default" }) => (
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { selectedActors, selectedGenres, selectedMood, userName, logout } = useVeloraStore();
+  const { selectedActors, selectedGenres, selectedMood, userName, logout, setIsOnboarded } = useVeloraStore();
   const { watchlist } = useVeloraStore();
 
   return (
@@ -113,7 +113,7 @@ export default function ProfilePage() {
       <div className="space-y-3 pt-12 border-t border-white/5">
         <ActionButton icon="⚙️" label="Edit AI Preferences" onClick={() => navigate("/preferences")} />
         <ActionButton icon="🔖" label="Manage Watchlist" onClick={() => navigate("/watchlist")} />
-        <ActionButton icon="🎬" label="Reset Onboarding" onClick={() => navigate("/onboarding")} />
+        <ActionButton icon="🎬" label="Reset Onboarding" onClick={() => { setIsOnboarded(false); navigate("/onboarding"); }} />
         <div className="pt-4">
           <ActionButton 
             variant="danger" 

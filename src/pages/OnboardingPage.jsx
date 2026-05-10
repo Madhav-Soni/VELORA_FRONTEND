@@ -1,40 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useVeloraStore } from "../store/useVeloraStore";
+import { useVeloraStore, GENRES, MOODS } from "../store/useVeloraStore";
 import { backend } from "../api/backend";
 import ActorPicker from "../components/ActorPicker";
-
-const GENRES = [
-  { id: 28, name: "Action" },
-  { id: 12, name: "Adventure" },
-  { id: 16, name: "Animation" },
-  { id: 35, name: "Comedy" },
-  { id: 80, name: "Crime" },
-  { id: 99, name: "Documentary" },
-  { id: 18, name: "Drama" },
-  { id: 10751, name: "Family" },
-  { id: 14, name: "Fantasy" },
-  { id: 36, name: "History" },
-  { id: 27, name: "Horror" },
-  { id: 10402, name: "Music" },
-  { id: 9648, name: "Mystery" },
-  { id: 10749, name: "Romance" },
-  { id: 878, name: "Sci-Fi" },
-  { id: 10770, name: "TV Movie" },
-  { id: 53, name: "Thriller" },
-  { id: 10752, name: "War" },
-  { id: 37, name: "Western" },
-];
-
-const MOODS = [
-  { id: "relaxed", label: "Relaxed", icon: "😌" },
-  { id: "excited", label: "Excited", icon: "🤩" },
-  { id: "melancholy", label: "Melancholy", icon: "😢" },
-  { id: "tense", label: "Tense", icon: "😰" },
-  { id: "romantic", label: "Romantic", icon: "🥰" },
-  { id: "thoughtful", label: "Thoughtful", icon: "🤔" },
-];
 
 export default function OnboardingPage() {
   const navigate = useNavigate();

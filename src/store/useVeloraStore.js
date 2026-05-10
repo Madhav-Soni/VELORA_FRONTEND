@@ -2,17 +2,29 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { backend } from "../api/backend";
 
-const GENRES = [
-  { id: 28, name: "Action" }, { id: 12, name: "Adventure" },
-  { id: 16, name: "Animation" }, { id: 35, name: "Comedy" },
-  { id: 80, name: "Crime" }, { id: 99, name: "Documentary" },
-  { id: 18, name: "Drama" }, { id: 14, name: "Fantasy" },
-  { id: 27, name: "Horror" }, { id: 9648, name: "Mystery" },
-  { id: 10749, name: "Romance" }, { id: 878, name: "Sci-Fi" },
-  { id: 53, name: "Thriller" }, { id: 37, name: "Western" },
+export const GENRES = [
+  { id: 28, name: "Action" },
+  { id: 12, name: "Adventure" },
+  { id: 16, name: "Animation" },
+  { id: 35, name: "Comedy" },
+  { id: 80, name: "Crime" },
+  { id: 99, name: "Documentary" },
+  { id: 18, name: "Drama" },
+  { id: 10751, name: "Family" },
+  { id: 14, name: "Fantasy" },
+  { id: 36, name: "History" },
+  { id: 27, name: "Horror" },
+  { id: 10402, name: "Music" },
+  { id: 9648, name: "Mystery" },
+  { id: 10749, name: "Romance" },
+  { id: 878, name: "Sci-Fi" },
+  { id: 10770, name: "TV Movie" },
+  { id: 53, name: "Thriller" },
+  { id: 10752, name: "War" },
+  { id: 37, name: "Western" },
 ];
 
-const MOODS = [
+export const MOODS = [
   { id: "relaxed", label: "Relaxed", icon: "😌" },
   { id: "excited", label: "Excited", icon: "🤩" },
   { id: "melancholy", label: "Melancholy", icon: "😢" },
@@ -97,10 +109,16 @@ export const useVeloraStore = create(
 
       // ── async sync actions ───────────────────────────────────────────────
       syncWatchlistWithBackend: async () => {
-        const { userId } = get();
-        if (!userId) return;
+        const requestedUserId = get().userId;
+        const requestedToken = get().token;
+        if (!requestedUserId || !requestedToken) return;
+
         try {
-          const remoteList = await backend.getWatchlist(userId);
+          const remoteList = await backend.getWatchlist(requestedUserId);
+
+          // Stale request guard: only commit if user/session hasn't changed
+          if (get().userId !== requestedUserId || get().token !== requestedToken) return;
+
           // Standardize: ensure watchlist items are objects with an 'id' property
           const normalizedList = (remoteList || []).map(id => 
             typeof id === "object" ? id : { id }
@@ -150,10 +168,16 @@ export const useVeloraStore = create(
       },
 
       syncPreferencesWithBackend: async () => {
-        const { userId } = get();
-        if (!userId) return;
+        const requestedUserId = get().userId;
+        const requestedToken = get().token;
+        if (!requestedUserId || !requestedToken) return;
+
         try {
-          const prefs = await backend.getPreferences(userId);
+          const prefs = await backend.getPreferences(requestedUserId);
+
+          // Stale request guard
+          if (get().userId !== requestedUserId || get().token !== requestedToken) return;
+
           if (prefs) {
             // Normalize genres: backend might return strings, frontend expects objects
             const normalizedGenres = (prefs.favoriteGenres || [])

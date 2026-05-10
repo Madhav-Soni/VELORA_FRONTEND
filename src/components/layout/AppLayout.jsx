@@ -25,6 +25,8 @@ export default function AppLayout() {
 
   // ── 2. Hydrate watchlist & prefs FROM backend on login ────────────────────────────
   useEffect(() => {
+    let isCancelled = false;
+    
     if (!userId) {
       hydratedRef.current = false;
       skipSyncRef.current = true;
@@ -33,24 +35,34 @@ export default function AppLayout() {
     if (hydratedRef.current) return;
     hydratedRef.current = true;
 
+    const currentUserId = userId;
+
     // Load Preferences
     const { syncPreferencesWithBackend } = useVeloraStore.getState();
     syncPreferencesWithBackend().catch(console.error);
 
     // Load Watchlist
     backend
-      .getWatchlist(userId)
+      .getWatchlist(currentUserId)
       .then((ids) => {
+        if (isCancelled) return;
         // Store only basic objects with IDs to avoid overfetching
         const basicMovies = (ids || []).map((id) => (typeof id === "object" ? id : { id }));
         setWatchlist(basicMovies);
         // Allow outgoing sync after hydration settles
-        setTimeout(() => { skipSyncRef.current = false; }, 0);
+        setTimeout(() => { 
+          if (!isCancelled) skipSyncRef.current = false; 
+        }, 0);
       })
       .catch((err) => {
+        if (isCancelled) return;
         console.error("Watchlist hydration failed:", err);
         skipSyncRef.current = false;
       });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [userId]);
 
   // ── 3. Sync local watchlist TO backend on change ──────────────────────────
