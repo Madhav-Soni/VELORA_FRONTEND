@@ -176,7 +176,7 @@ export default function MovieModal({ movieId, onClose }) {
             {/* Cast Grid */}
             <div className="mt-12">
               <h3 className="text-[11px] font-black text-white/30 uppercase tracking-[0.3em] mb-6">Top Cast</h3>
-              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 overscroll-contain">
                 {isLoading ? (
                   Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="flex-shrink-0 w-20 flex flex-col items-center">

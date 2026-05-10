@@ -190,7 +190,7 @@ export default function Topbar({ onMovieSelect }) {
       </div>
 
       {/* Mood chips */}
-      <div className="hidden xl:flex items-center gap-2 overflow-x-auto scrollbar-hide">
+      <div className="hidden xl:flex items-center gap-2 overflow-x-auto scrollbar-hide overscroll-contain">
         {MOODS.map((mood) => (
           <button
             key={mood}
@@ -238,7 +238,7 @@ export default function Topbar({ onMovieSelect }) {
               initial={{ opacity: 0, y: 8, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.97 }}
-              className="absolute right-0 top-full mt-3 w-56 glass rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl z-50"
+              className="absolute right-0 top-full mt-3 w-56 bg-[#111111]/95 backdrop-blur-2xl rounded-[2rem] border border-white/10 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.8)] z-[100]"
             >
               <div className="p-2 space-y-1">
                 {[
