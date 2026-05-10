@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useSearchMulti } from "../../hooks/useMovieQueries";
 import { IMAGE_BASE } from "../../api/tmdb";
-import { useVeloraStore } from "../../store/useVeloraStore";
+import { useVeloraStore, MOODS as STORE_MOODS } from "../../store/useVeloraStore";
 
-const MOODS = ["All", "Action", "Comedy", "Horror", "Romance", "Sci-Fi", "Thriller"];
+const MOODS = [{ id: "All", label: "All" }, ...STORE_MOODS];
 const PLACEHOLDER_IMG = "https://via.placeholder.com/40x60/1a1a1a/444?text=?";
 
 function useDebounce(value, delay) {
@@ -193,15 +193,16 @@ export default function Topbar({ onMovieSelect }) {
       <div className="hidden xl:flex items-center gap-2 overflow-x-auto scrollbar-hide overscroll-contain">
         {MOODS.map((mood) => (
           <button
-            key={mood}
-            onClick={() => setActiveMood(mood)}
-            className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${
-              activeMood === mood
+            key={mood.id}
+            onClick={() => setActiveMood(mood.id)}
+            className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 flex items-center gap-2 ${
+              activeMood === mood.id
                 ? "bg-brand text-white shadow-lg shadow-brand/20"
                 : "bg-white/[0.03] text-white/20 hover:text-white/60 border border-white/5"
             }`}
           >
-            {mood}
+            {mood.icon && <span>{mood.icon}</span>}
+            {mood.label}
           </button>
         ))}
       </div>

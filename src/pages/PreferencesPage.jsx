@@ -22,7 +22,6 @@ export default function PreferencesPage() {
     userId,
     selectedActors, setSelectedActors,
     selectedGenres, toggleGenre,
-    selectedMood, setSelectedMood,
   } = useVeloraStore();
 
   const [showActorPicker, setShowActorPicker] = useState(false);
@@ -49,8 +48,7 @@ export default function PreferencesPage() {
               name: a.name,
               profile_path: a.profile_path
             })),
-          favoriteGenres: selectedGenres.map(g => g.name),
-          selectedMood: selectedMood?.id ?? null
+          favoriteGenres: selectedGenres.map(g => g.name)
         });
       } catch (err) {
         console.error("Failed to sync actors:", err);
@@ -72,8 +70,7 @@ export default function PreferencesPage() {
             name: a.name,
             profile_path: a.profile_path ?? null
           })),
-          favoriteGenres: selectedGenres.map(g => g.name),
-          selectedMood: selectedMood?.id ?? null
+          favoriteGenres: selectedGenres.map(g => g.name)
         });
       } catch (err) {
         console.error("Failed to sync actor removal:", err);
@@ -95,8 +92,7 @@ export default function PreferencesPage() {
               profile_path:
                 a.profile_path ?? null
             })),
-          favoriteGenres: nextGenres.map(g => g.name),
-          selectedMood: selectedMood?.id ?? null
+          favoriteGenres: nextGenres.map(g => g.name)
         });
       } catch (err) {
         console.error("Failed to sync genres:", err);
@@ -219,54 +215,6 @@ export default function PreferencesPage() {
                   }`}
               >
                 {genre.name}
-              </motion.button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Mood section */}
-      <section>
-        <SectionHeader
-          title="Atmosphere"
-          subtitle="Real-time Vibe Calibration"
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {MOODS.map((m) => {
-            const active = selectedMood?.id === m.id;
-            return (
-              <motion.button
-                key={m.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={async () => {
-                  const nextMood = active ? null : m;
-                  setSelectedMood(nextMood);
-                  if (userId) {
-                    try {
-                      await backend.updatePreferences(userId, {
-                        favoriteActors: selectedActors.map(a => ({
-                          id: a.id,
-                          name: a.name,
-                          profile_path: a.profile_path ?? null
-                        })),
-                        favoriteGenres: selectedGenres.map(g => g.name),
-                        selectedMood: nextMood?.id ?? null
-                      });
-                    } catch (err) {
-                      console.error("Failed to sync mood:", err);
-                    }
-                  }
-                }}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${active
-                  ? "border-gold bg-gold/10 text-gold"
-                  : "border-white/5 bg-white/[0.02] text-white/20 hover:text-white hover:border-white/10"
-                  }`}
-              >
-                <span className="text-2xl">{m.icon}</span>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${active ? "text-gold" : "text-white/40"}`}>
-                  {m.label}
-                </span>
               </motion.button>
             );
           })}

@@ -22,7 +22,6 @@ export default function ScrollRow({
   skeletonType = "movie"
 }) {
   const scrollRef = useRef(null);
-  const isPointerInsideRef = useRef(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -42,19 +41,30 @@ export default function ScrollRow({
 
   const handleWheel = useCallback((e) => {
     const el = scrollRef.current;
-    if (!el || !isPointerInsideRef.current) return;
+    if (!el) return;
 
     const horizontalDelta = e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)
       ? e.deltaY
       : e.deltaX;
+    const isHorizontalIntent = Math.abs(horizontalDelta) > 2
+      && Math.abs(horizontalDelta) >= Math.abs(e.deltaY) * 0.5;
 
-    if (Math.abs(horizontalDelta) < 1) return;
+    if (!isHorizontalIntent) return;
 
     e.preventDefault();
     e.stopPropagation();
+    e.stopImmediatePropagation?.();
     el.scrollLeft += horizontalDelta;
     checkScroll();
   }, [checkScroll]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    el.addEventListener("wheel", handleWheel, { capture: true, passive: false });
+    return () => el.removeEventListener("wheel", handleWheel, { capture: true });
+  }, [handleWheel]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -140,14 +150,11 @@ export default function ScrollRow({
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          onPointerEnter={() => { isPointerInsideRef.current = true; }}
-          onPointerLeave={() => { isPointerInsideRef.current = false; }}
-          onWheel={handleWheel}
           className="flex gap-4 overflow-x-auto px-6 sm:px-8 pb-6 scrollbar-hide"
           style={{
             overscrollBehaviorX: "contain",
             overscrollBehaviorY: "auto",
-            touchAction: "pan-y pinch-zoom",
+            touchAction: "pan-x pan-y pinch-zoom",
             WebkitOverflowScrolling: "auto",
           }}
         >

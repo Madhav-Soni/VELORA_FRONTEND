@@ -117,12 +117,12 @@ export default function HomePage() {
   const { selectedActors, userId, activeMood } = useVeloraStore();
 
   const MOOD_TO_GENRE = {
-    "Action": 28,
-    "Comedy": 35,
-    "Horror": 27,
-    "Romance": 10749,
-    "Sci-Fi": 878,
-    "Thriller": 53
+    "relaxed": 35,    // Comedy
+    "excited": 28,    // Action
+    "melancholy": 18, // Drama
+    "tense": 53,      // Thriller
+    "romantic": 10749, // Romance
+    "thoughtful": 99   // Documentary
   };
 
   const activeGenreId = MOOD_TO_GENRE[activeMood];

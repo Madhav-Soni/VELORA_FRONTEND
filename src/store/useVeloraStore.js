@@ -241,7 +241,13 @@ export const useVeloraStore = create(
           watchlist: [],
         }),
     }),
-    { name: "velora-prefs" }
+    { 
+      name: "velora-prefs",
+      partialize: (state) => {
+        const { activeMood, ...rest } = state;
+        return rest;
+      }
+    }
   )
 );
 

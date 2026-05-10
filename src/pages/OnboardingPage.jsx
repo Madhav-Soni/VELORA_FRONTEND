@@ -11,7 +11,6 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [actors, setActors] = useState([]);
   const [genres, setGenres] = useState([]);
-  const [mood, setMood] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,13 +29,11 @@ export default function OnboardingPage() {
       if (userId) {
         await backend.updatePreferences(userId, {
           favoriteActors: actors.map(a => ({ id: a.id, name: a.name, profile_path: a.profile_path })),
-          favoriteGenres: genres.map(g => g.name),
-          selectedMood: mood?.id ?? null
+          favoriteGenres: genres.map(g => g.name)
         });
       }
       setSelectedActors(actors);
       setSelectedGenres(genres);
-      setSelectedMood(mood);
       setIsOnboarded(true);
       navigate("/home");
     } catch (err) {
@@ -85,36 +82,6 @@ export default function OnboardingPage() {
         </div>
       ),
       canNext: genres.length > 0,
-    },
-    {
-      title: "How are you feeling?",
-      subtitle: "We'll tailor recommendations to your current vibe",
-      content: (
-        <div className="grid grid-cols-2 gap-4">
-          {MOODS.map((m) => {
-            const selected = mood?.id === m.id;
-            return (
-              <motion.button
-                key={m.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setMood(m)}
-                className={`flex flex-col items-center gap-3 p-6 rounded-2xl border transition-all duration-300 ${
-                  selected
-                    ? "border-brand bg-brand/5 shadow-2xl shadow-brand/10"
-                    : "border-white/5 bg-white/[0.02] hover:border-white/10"
-                }`}
-              >
-                <span className="text-3xl">{m.icon}</span>
-                <span className={`text-xs font-black uppercase tracking-widest ${selected ? "text-brand" : "text-white/40"}`}>
-                  {m.label}
-                </span>
-              </motion.button>
-            );
-          })}
-        </div>
-      ),
-      canNext: !!mood,
     },
   ];
 
