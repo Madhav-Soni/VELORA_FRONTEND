@@ -42,14 +42,10 @@ export default function ScrollRow({
   const handleWheel = useCallback((e) => {
     const el = scrollRef.current;
     if (!el) return;
-
     const dx = e.shiftKey ? e.deltaY : e.deltaX;
     const dy = e.shiftKey ? 0 : e.deltaY;
-
-    // Only intercept when horizontal intent clearly dominates
     const isHorizontal = Math.abs(dx) > Math.abs(dy) * 1.5 && Math.abs(dx) > 4;
     if (!isHorizontal) return;
-
     e.preventDefault();
     el.scrollLeft += dx;
     checkScroll();

@@ -1,5 +1,6 @@
 import { useOutletContext } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { useTrending, usePopularActors, useTopRated, useNowPlaying, useMoviesByActor } from "../hooks/useTMDB";
 import { useRecommendations } from "../hooks/useBackend";
 import { useVeloraStore } from "../store/useVeloraStore";
@@ -140,10 +141,21 @@ export default function HomePage() {
     return movies.filter(m => m.genre_ids?.includes(genreId) || m.genres?.some(g => g.id === genreId));
   };
 
-  const heroMovie =
-    recommendations.data?.length > 0
-      ? recommendations.data[0]
-      : trending.data?.results?.[0];
+  const heroPool = [
+    ...(recommendations.data?.slice(0, 3) ?? []),
+    ...(trending.data?.results?.slice(0, 5) ?? []),
+  ].filter(Boolean);
+
+  const [heroIndex, setHeroIndex] = useState(0);
+  const heroMovie = heroPool[heroIndex] ?? null;
+
+  useEffect(() => {
+    if (heroPool.length <= 1) return;
+    const timer = setInterval(() => {
+      setHeroIndex((i) => (i + 1) % heroPool.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroPool.length]);
 
   return (
     <div className="pb-24">
@@ -151,11 +163,39 @@ export default function HomePage() {
       {trending.isLoading ? (
         <div className="w-full h-[70vh] skeleton" />
       ) : (
-        <HeroBanner movie={heroMovie} onSelect={onMovieSelect} />
+        <div className="relative w-full h-full">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={heroMovie?.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0"
+            >
+              <HeroBanner movie={heroMovie} onSelect={onMovieSelect} />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Dot indicators */}
+          {heroPool.length > 1 && (
+            <div className="absolute bottom-6 right-8 flex gap-2 z-20">
+              {heroPool.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setHeroIndex(i)}
+                  className={`h-1 rounded-full transition-all duration-500 ${
+                    i === heroIndex ? "w-6 bg-brand" : "w-2 bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       )}
 
       {/* Rows */}
-      <div className="mt-4 space-y-4">
+      <div className="mt-2 space-y-2">
         {/* 1. Recommended For You */}
         <MovieRow
           title={recommendations.data?.length > 0 ? "Recommended For You" : "Popular Right Now"}
