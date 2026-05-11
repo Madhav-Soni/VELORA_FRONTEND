@@ -43,18 +43,15 @@ export default function ScrollRow({
     const el = scrollRef.current;
     if (!el) return;
 
-    const horizontalDelta = e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)
-      ? e.deltaY
-      : e.deltaX;
-    const isHorizontalIntent = Math.abs(horizontalDelta) > 2
-      && Math.abs(horizontalDelta) >= Math.abs(e.deltaY) * 0.5;
+    const dx = e.shiftKey ? e.deltaY : e.deltaX;
+    const dy = e.shiftKey ? 0 : e.deltaY;
 
-    if (!isHorizontalIntent) return;
+    // Only intercept when horizontal intent clearly dominates
+    const isHorizontal = Math.abs(dx) > Math.abs(dy) * 1.5 && Math.abs(dx) > 4;
+    if (!isHorizontal) return;
 
     e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation?.();
-    el.scrollLeft += horizontalDelta;
+    el.scrollLeft += dx;
     checkScroll();
   }, [checkScroll]);
 
@@ -62,8 +59,8 @@ export default function ScrollRow({
     const el = scrollRef.current;
     if (!el) return;
 
-    el.addEventListener("wheel", handleWheel, { capture: true, passive: false });
-    return () => el.removeEventListener("wheel", handleWheel, { capture: true });
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
   }, [handleWheel]);
 
   const scroll = (direction) => {
