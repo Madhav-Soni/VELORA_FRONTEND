@@ -3,7 +3,7 @@ import { BACKEND_URL, api } from "./backend";
 const BASE_URL = `${BACKEND_URL}/tmdb`;
 
 export const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-export const BACKDROP_BASE = "https://image.tmdb.org/t/p/w1280";
+export const BACKDROP_BASE = "https://image.tmdb.org/t/p/original";
 
 export const fetcher = async (endpoint) => {
   const res = await api.get(`/tmdb${endpoint}`);

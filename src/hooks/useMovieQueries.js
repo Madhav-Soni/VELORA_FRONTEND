@@ -41,3 +41,11 @@ export const useGenres = () =>
     queryFn: tmdbExt.getGenres,
     staleTime: Infinity,
   });
+
+export const usePersonDetails = (id) =>
+  useQuery({
+    queryKey: ["personDetails", id],
+    queryFn: () => tmdbExt.getActorDetails(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 30,
+  });
