@@ -78,9 +78,8 @@ export default function AppLayout() {
       <Sidebar />
       <div className="flex-1 md:ml-[210px] flex flex-col min-h-screen relative">
         <Topbar onMovieSelect={setSelectedMovieId} />
-        <main className="flex-1 pt-[72px]">          <div className="relative z-0">
+        <main className="flex-1 pt-[72px] w-full min-w-0">
           <Outlet context={{ onMovieSelect: setSelectedMovieId }} />
-        </div>
         </main>
       </div>
 
