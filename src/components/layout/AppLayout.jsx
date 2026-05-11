@@ -76,9 +76,9 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen bg-[#080808] flex">
       <Sidebar />
-      <div className="flex-1 md:ml-[210px] flex flex-col min-h-screen relative">
+      <div className="flex-1 md:ml-[210px] flex flex-col min-h-screen relative min-w-0 overflow-x-hidden">
         <Topbar onMovieSelect={setSelectedMovieId} />
-        <main className="flex-1 pt-[72px] w-full min-w-0">
+        <main className="flex-1 pt-[72px] w-full min-w-0 overflow-x-hidden">
           <Outlet context={{ onMovieSelect: setSelectedMovieId }} />
         </main>
       </div>

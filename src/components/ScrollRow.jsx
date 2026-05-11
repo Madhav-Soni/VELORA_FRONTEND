@@ -75,7 +75,7 @@ export default function ScrollRow({
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="py-6 relative group/row"
+      className="py-6 relative group/row w-full min-w-0"
       style={{ willChange: "auto" }}
     >
 
@@ -119,7 +119,7 @@ export default function ScrollRow({
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {/* Gradient Fades */}
         <AnimatePresence>
           {canScrollLeft && (

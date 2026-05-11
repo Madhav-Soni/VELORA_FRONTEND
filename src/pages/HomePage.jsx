@@ -157,9 +157,12 @@ export default function HomePage() {
   }, [heroPool.length]);
 
   return (
-    <div className="pb-24">
-      {/* Hero Section */}
-      <div className="relative">
+    <div className="pb-24 w-full">
+      {/* ── Hero Section ─────────────────────────────────────────────────────
+          Viewport-anchored: w-full resolves against the AppLayout main column
+          (which is overflow-x-hidden), NOT against row content width.
+          overflow-hidden prevents the backdrop image from leaking. */}
+      <div className="relative w-full overflow-hidden">
         {trending.isLoading ? (
           <div className="w-full h-[85vh] min-h-[560px] skeleton" />
         ) : (
@@ -183,8 +186,10 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Rows */}
-      <div className="relative z-10 mt-10 space-y-10">
+      {/* ── Movie Rows ────────────────────────────────────────────────────────
+          Each row scrolls internally. This wrapper is overflow-x-hidden so
+          no row can ever inflate the document width or touch the hero above. */}
+      <div className="relative z-10 mt-10 space-y-10 w-full overflow-x-hidden">
         <MovieRow
           title={recommendations.data?.length > 0 ? "Recommended For You" : "Popular Right Now"}
           movies={filterMovies(recommendations.data?.length > 0 ? recommendations.data : trending.data?.results)}
