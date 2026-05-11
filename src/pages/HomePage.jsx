@@ -19,13 +19,13 @@ function HeroBanner({ movie, onSelect }) {
   const bg = movie.backdrop_path ? `${BACKDROP_BASE}${movie.backdrop_path}` : BACKDROP_PLACEHOLDER;
 
   return (
-    <div className="relative w-full h-[78vh] min-h-[620px] overflow-hidden">
+    <div className="relative w-full h-[85vh] min-h-[560px] overflow-hidden">
       <motion.img
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
         src={bg}
-        className="absolute inset-0 w-full h-full object-cover object-center scale-110"
+        className="absolute inset-0 w-full h-full object-cover object-top"
         onError={(e) => { e.target.src = BACKDROP_PLACEHOLDER; }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-[#080808] via-[#080808]/40 to-transparent" />
@@ -161,7 +161,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="relative">
         {trending.isLoading ? (
-          <div className="w-full h-[70vh] skeleton" />
+          <div className="w-full h-[85vh] min-h-[560px] skeleton" />
         ) : (
           <HeroBanner movie={heroMovie} onSelect={onMovieSelect} />
         )}
