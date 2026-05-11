@@ -3,6 +3,25 @@ import { useVeloraStore } from "../store/useVeloraStore";
 import { IMAGE_BASE } from "../api/tmdb";
 import { useNavigate } from "react-router-dom";
 
+const CINEPHILE_LINES = [
+  "✦ Cinephile",
+  "◈ Obsessed with Cinema",
+  "— The Velora Cut —",
+  "🎬 Born in the Dark",
+  "Watches. Feels. Repeats.",
+  "Lives in the Third Act",
+  "Popcorn is a Lifestyle",
+  "Director's Cut Only",
+  "Seen It Twice Already",
+  "Always Mid-Credits Scene",
+  "Cried at the Last Frame",
+  "Volume at MAX. Always.",
+  "No Spoilers. Ever.",
+  "One More Episode. Forever.",
+  "Streaming Since Before It Was Cool",
+];
+
+const cinephileLine = CINEPHILE_LINES[Math.floor(Math.random() * CINEPHILE_LINES.length)];
 const ProfileStat = ({ label, value, icon, index }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
@@ -51,7 +70,7 @@ export default function ProfilePage() {
         
         <div className="flex items-center gap-3 mb-2">
           <span className="w-6 h-[2px] bg-brand" />
-          <p className="text-brand text-[10px] font-black tracking-[0.4em] uppercase">Premium Member</p>
+          <p className="text-[9px] font-black tracking-[0.35em] uppercase bg-gradient-to-r from-brand via-orange-400 to-amber-300 bg-clip-text text-transparent">{cinephileLine}</p>
           <span className="w-6 h-[2px] bg-brand" />
         </div>
         
@@ -78,17 +97,24 @@ export default function ProfilePage() {
       <div className="space-y-12 mb-16">
         {selectedActors.length > 0 && (
           <div>
-            <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6 px-2">Followed Talent</h3>
+            <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-5 px-1">Followed Talent</h3>
             <div className="flex flex-wrap gap-3">
               {selectedActors.map((actor) => (
-                <div key={actor.id} className="flex items-center gap-2 pl-1 pr-4 py-1 glass rounded-full border border-white/5">
-                  <div className="w-7 h-7 rounded-full overflow-hidden border border-white/10">
-                    <img 
-                      src={actor.profile_path ? `${IMAGE_BASE}${actor.profile_path}` : "https://via.placeholder.com/32x32/111/444?text=?"} 
-                      className="w-full h-full object-cover grayscale" 
-                    />
+                <div key={actor.id} className="group flex items-center gap-3 pl-1.5 pr-5 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/8 hover:border-brand/40 rounded-2xl transition-all duration-300 cursor-default">
+                  {/* Avatar with color ring on hover */}
+                  <div className="relative w-9 h-9 flex-shrink-0">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand/60 to-orange-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+                    <div className="relative w-full h-full rounded-full overflow-hidden border border-white/10 group-hover:border-brand/50 transition-colors duration-300">
+                      <img
+                        src={actor.profile_path ? `${IMAGE_BASE}${actor.profile_path}` : "https://via.placeholder.com/36x36/111/444?text=?"}
+                        className="w-full h-full object-cover object-top transition-all duration-300 group-hover:scale-110"
+                      />
+                    </div>
                   </div>
-                  <span className="text-[11px] font-bold text-white/40">{actor.name}</span>
+                  {/* Name */}
+                  <span className="text-[12px] font-bold text-white/60 group-hover:text-white transition-colors duration-300 tracking-wide whitespace-nowrap">
+                    {actor.name}
+                  </span>
                 </div>
               ))}
             </div>

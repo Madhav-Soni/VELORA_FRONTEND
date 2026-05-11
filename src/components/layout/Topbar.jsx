@@ -112,7 +112,7 @@ export default function Topbar({ onMovieSelect }) {
       {/* Search Bar Container */}
       <div
         ref={searchRef}
-        className={`relative flex-1 hidden sm:block transition-all duration-500 ease-out ${isSearchActive ? "max-w-2xl mx-auto scale-105" : "max-w-md"
+        className={`relative hidden sm:block transition-all duration-500 ease-out ${isSearchActive ? "w-[520px] z-[80]" : "w-[200px]"
           }`}
       >
         <div className={`flex items-center gap-3 px-5 py-3 rounded-[1.25rem] bg-white/[0.03] border transition-all duration-300 ${isSearchActive ? "bg-white/[0.07] border-brand shadow-[0_0_20px_rgba(229,9,20,0.15)]" : "border-white/5 hover:border-white/10"

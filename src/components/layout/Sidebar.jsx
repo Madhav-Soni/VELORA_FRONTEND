@@ -56,16 +56,7 @@ export default function Sidebar() {
 
             {/* Logo */}
             <div className="px-6 pt-10 pb-12">
-              <div className="flex items-center gap-3 group/logo cursor-pointer">
-                <div className="relative w-9 h-9 flex-shrink-0">
-                  <div className="absolute -inset-1 bg-brand/40 blur-xl rounded-full group-hover/logo:bg-brand/60 transition-all duration-500" />
-                  <div className="relative w-full h-full rounded-full flex items-center justify-center overflow-hidden shadow-[0_0_24px_rgba(229,9,20,0.5)]" style={{ background: "linear-gradient(135deg, #E50914 0%, #c40812 55%, #7a0000 100%)" }}>
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent" />
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 relative z-10" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 4l7 13 7-13" fill="none" stroke="white" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
+              <div className="flex items-center group/logo cursor-pointer">
                 <span className="text-2xl font-black font-display text-gradient-red tracking-wider block">
                   VELORA
                 </span>
