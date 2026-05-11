@@ -19,13 +19,13 @@ function HeroBanner({ movie, onSelect }) {
   const bg = movie.backdrop_path ? `${BACKDROP_BASE}${movie.backdrop_path}` : BACKDROP_PLACEHOLDER;
 
   return (
-    <div className="relative w-full h-[70vh] min-h-[450px] overflow-hidden">
+    <div className="relative w-full h-[78vh] min-h-[620px] overflow-hidden">
       <motion.img
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
         src={bg}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-center scale-110"
         onError={(e) => { e.target.src = BACKDROP_PLACEHOLDER; }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-[#080808] via-[#080808]/40 to-transparent" />
@@ -70,7 +70,7 @@ function HeroBanner({ movie, onSelect }) {
               onClick={() => onSelect?.(movie.id)}
               className="flex items-center gap-3 px-8 py-4 bg-white/90 text-black text-xs font-black uppercase tracking-[0.2em] rounded-2xl shadow-2xl transition-colors"
             >
-              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3" /></svg>
               Watch Now
             </motion.button>
 
@@ -78,11 +78,10 @@ function HeroBanner({ movie, onSelect }) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => inWatchlist ? removeFromWatchlistAsync(movie.id) : addToWatchlistAsync(movie)}
-              className={`flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-2xl border-2 transition-all duration-300 ${
-                inWatchlist
-                  ? "bg-brand/10 border-brand text-brand"
-                  : "bg-white/5 border-white/10 text-white hover:border-white/30"
-              }`}
+              className={`flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] rounded-2xl border-2 transition-all duration-300 ${inWatchlist
+                ? "bg-brand/10 border-brand text-brand"
+                : "bg-white/5 border-white/10 text-white hover:border-white/30"
+                }`}
             >
               <svg viewBox="0 0 24 24" fill={inWatchlist ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" width="16" height="16">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
@@ -101,8 +100,8 @@ function ActorMovieSection({ actor, onSelect }) {
   if (!actor) return null;
   const movies = data?.cast?.slice(0, 12) ?? [];
   return (
-    <MovieRow 
-      title={`Because You Like ${actor.name}`} 
+    <MovieRow
+      title={`Because You Like ${actor.name}`}
       movies={movies}
       onSelect={onSelect}
       loading={isLoading}
@@ -160,43 +159,32 @@ export default function HomePage() {
   return (
     <div className="pb-24">
       {/* Hero Section */}
-      {trending.isLoading ? (
-        <div className="w-full h-[70vh] skeleton" />
-      ) : (
-        <div className="relative w-full h-full">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={heroMovie?.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8 }}
-              className="absolute inset-0"
-            >
-              <HeroBanner movie={heroMovie} onSelect={onMovieSelect} />
-            </motion.div>
-          </AnimatePresence>
+      <div className="relative">
+        {trending.isLoading ? (
+          <div className="w-full h-[70vh] skeleton" />
+        ) : (
+          <HeroBanner movie={heroMovie} onSelect={onMovieSelect} />
+        )}
 
-          {/* Dot indicators */}
-          {heroPool.length > 1 && (
-            <div className="absolute bottom-6 right-8 flex gap-2 z-20">
-              {heroPool.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setHeroIndex(i)}
-                  className={`h-1 rounded-full transition-all duration-500 ${
-                    i === heroIndex ? "w-6 bg-brand" : "w-2 bg-white/30 hover:bg-white/50"
+        {/* Dot indicators */}
+        {heroPool.length > 1 && (
+          <div className="absolute bottom-6 right-8 flex gap-2 z-20">
+            {heroPool.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setHeroIndex(i)}
+                className={`h-1 rounded-full transition-all duration-500 ${i === heroIndex
+                  ? "w-6 bg-brand"
+                  : "w-2 bg-white/30 hover:bg-white/50"
                   }`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Rows */}
-      <div className="mt-2 space-y-2">
-        {/* 1. Recommended For You */}
+      <div className="relative z-10 mt-10 space-y-10">
         <MovieRow
           title={recommendations.data?.length > 0 ? "Recommended For You" : "Popular Right Now"}
           movies={filterMovies(recommendations.data?.length > 0 ? recommendations.data : trending.data?.results)}
@@ -239,6 +227,6 @@ export default function HomePage() {
           onSelect={onMovieSelect}
         />
       </div>
-    </div>
+    </div >
   );
 }
