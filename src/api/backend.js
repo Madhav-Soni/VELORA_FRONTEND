@@ -39,6 +39,7 @@ api.interceptors.response.use(
 export const ENDPOINTS = {
   LOGIN: "/login",
   SIGNUP: "/signup",
+  GOOGLE: "/google",
   RECOMMENDATIONS: (userId) => `/recommendations/${userId}`,
   PREFERENCES: (userId) => `/preferences/${userId}`,
   WATCHLIST: (userId) => `/watchlist/${userId}`,
@@ -54,6 +55,9 @@ export const backend = {
 
   signup: (name, email, password) =>
     api.post(ENDPOINTS.SIGNUP, { name, email, password }).then((res) => res.data),
+
+  googleLogin: (idToken) =>
+    api.post(ENDPOINTS.GOOGLE, { token: idToken }).then((res) => res.data),
 
   // Recommendations
   getRecommendations: (userId) =>
