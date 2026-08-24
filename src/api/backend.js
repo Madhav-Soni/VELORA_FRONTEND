@@ -57,7 +57,7 @@ export const backend = {
     api.post(ENDPOINTS.SIGNUP, { name, email, password }).then((res) => res.data),
 
   googleLogin: (idToken) =>
-    api.post(ENDPOINTS.GOOGLE, { token: idToken }).then((res) => res.data),
+    api.post(ENDPOINTS.GOOGLE, { credential: idToken }).then((res) => res.data),
 
   // Recommendations
   getRecommendations: (userId) =>
