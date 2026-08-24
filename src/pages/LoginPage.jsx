@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Navigate, Link } from 'react-router-dom'
+import { GoogleLogin } from '@react-oauth/google'
 import { useVeloraStore } from '../store/useVeloraStore'
 import { backend } from '../api/backend'
 
@@ -67,15 +68,38 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSuccess = async (credentialResponse) => {
     setError('')
+    setLoading(true)
     try {
-      // Placeholder for Google OAuth token retrieval prior to backend authentication
-      setError('Google Sign-In endpoint ready (/api/google). Connect OAuth Client ID to complete authentication flow.')
+      const data = await backend.googleLogin(credentialResponse.credential)
+
+      setAuth({
+        userId: data.userId,
+        token: data.token,
+        name: data.name,
+      })
+
+      const {
+        syncPreferencesWithBackend,
+        syncWatchlistWithBackend,
+      } = useVeloraStore.getState()
+
+      await Promise.all([
+        syncPreferencesWithBackend(),
+        syncWatchlistWithBackend(),
+      ])
+
+      const onboarded = useVeloraStore.getState().isOnboarded
+
+      navigate(onboarded ? '/home' : '/onboarding')
     } catch (err) {
       setError(err.message || 'Google login failed')
+    } finally {
+      setLoading(false)
     }
   }
+
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -209,21 +233,16 @@ export default function LoginPage() {
             </div>
 
             {/* Continue with Google */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.985 }}
-              type="button"
-              onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center gap-3 bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 text-sm backdrop-blur-sm shadow-sm"
-            >
-              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.7 1 4 3.5 2.2 7.1l3.7 2.8C6.7 7.3 9.1 5 12 5z"/>
-                <path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9c-.3 1.4-1 2.5-2.2 3.3l3.6 2.8c2.1-1.9 3.3-4.7 3.3-8.1z"/>
-                <path fill="#FBBC05" d="M5.8 14.1c-.2-.7-.3-1.4-.3-2.1s.1-1.4.3-2.1L2.2 7.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.2 4.9l3.6-2.8z"/>
-                <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5L2.2 16.9C4 20.5 7.7 23 12 23z"/>
-              </svg>
-              <span>Continue with Google</span>
-            </motion.button>
+            <div className="flex justify-center w-full min-h-[44px]">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Google login failed')}
+                theme="filled_black"
+                shape="pill"
+                width="100%"
+              />
+            </div>
+
 
             {/* Signup */}
             <p className="text-center text-gray-500 text-sm mt-6">
