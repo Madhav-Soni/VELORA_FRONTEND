@@ -149,6 +149,9 @@ export const useVeloraStore = create(
           try {
             const updatedIds = get().favorites.map((m) => m.id);
             await backend.syncFavorites(userId, updatedIds);
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
+            }
           } catch (err) {
             console.error("Backend favorites sync failed:", err);
             set({ favorites: previousFavorites });
@@ -164,6 +167,9 @@ export const useVeloraStore = create(
           try {
             const updatedIds = get().favorites.map((m) => m.id);
             await backend.syncFavorites(userId, updatedIds);
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
+            }
           } catch (err) {
             console.error("Backend favorites sync failed:", err);
             set({ favorites: previousFavorites });
@@ -178,6 +184,9 @@ export const useVeloraStore = create(
         if (userId) {
           try {
             await backend.syncFavorites(userId, []);
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
+            }
           } catch (err) {
             console.error("Backend favorites clear failed:", err);
             set({ favorites: previousFavorites });
@@ -236,6 +245,9 @@ export const useVeloraStore = create(
           try {
             const updatedIds = get().watchlist.map((m) => m.id);
             await backend.syncWatchlist(userId, updatedIds);
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
+            }
           } catch (err) {
             console.error("Backend watchlist sync failed:", err);
             set({ watchlist: previousWatchlist });
@@ -251,6 +263,9 @@ export const useVeloraStore = create(
           try {
             const updatedIds = get().watchlist.map((m) => m.id);
             await backend.syncWatchlist(userId, updatedIds);
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
+            }
           } catch (err) {
             console.error("Backend watchlist sync failed:", err);
             set({ watchlist: previousWatchlist });
@@ -265,6 +280,9 @@ export const useVeloraStore = create(
         if (userId) {
           try {
             await backend.syncWatchlist(userId, []);
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
+            }
           } catch (err) {
             console.error("Backend watchlist clear failed:", err);
             set({ watchlist: previousWatchlist });
