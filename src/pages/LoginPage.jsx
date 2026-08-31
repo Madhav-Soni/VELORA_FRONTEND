@@ -51,11 +51,13 @@ export default function LoginPage() {
       const {
         syncPreferencesWithBackend,
         syncWatchlistWithBackend,
+        syncFavoritesWithBackend,
       } = useVeloraStore.getState()
 
       await Promise.all([
         syncPreferencesWithBackend(),
         syncWatchlistWithBackend(),
+        syncFavoritesWithBackend(),
       ])
 
       const onboarded = useVeloraStore.getState().isOnboarded
@@ -83,11 +85,13 @@ export default function LoginPage() {
       const {
         syncPreferencesWithBackend,
         syncWatchlistWithBackend,
+        syncFavoritesWithBackend,
       } = useVeloraStore.getState()
 
       await Promise.all([
         syncPreferencesWithBackend(),
         syncWatchlistWithBackend(),
+        syncFavoritesWithBackend(),
       ])
 
       const onboarded = useVeloraStore.getState().isOnboarded

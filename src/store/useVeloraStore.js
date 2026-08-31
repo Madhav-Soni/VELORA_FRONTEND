@@ -67,6 +67,7 @@ export const useVeloraStore = create(
           selectedMood: null,
           activeMood: "All",
           watchlist: [],
+          favorites: [],
         });
       },
 
@@ -128,6 +129,55 @@ export const useVeloraStore = create(
       isInFavorites: (movieId) => get().favorites.some((m) => m.id === movieId),
 
       clearFavorites: () => set({ favorites: [] }),
+
+      setFavorites: (list) => set({ favorites: list }),
+
+      addToFavoritesAsync: async (movie) => {
+        const { userId } = get();
+        get().addToFavorites(movie); // Optimistic update
+        if (userId) {
+          try {
+            const updatedIds = get().favorites.map((m) => m.id);
+            await backend.syncFavorites(userId, updatedIds);
+          } catch (err) {
+            console.error("Backend favorites sync failed:", err);
+          }
+        }
+      },
+
+      removeFromFavoritesAsync: async (movieId) => {
+        const { userId } = get();
+        get().removeFromFavorites(movieId); // Optimistic update
+        if (userId) {
+          try {
+            const updatedIds = get().favorites.map((m) => m.id);
+            await backend.syncFavorites(userId, updatedIds);
+          } catch (err) {
+            console.error("Backend favorites sync failed:", err);
+          }
+        }
+      },
+
+      syncFavoritesWithBackend: async () => {
+        const requestedUserId = get().userId;
+        const requestedToken = get().token;
+        if (!requestedUserId || !requestedToken) return;
+
+        try {
+          const remoteList = await backend.getFavorites(requestedUserId);
+
+          // Stale request guard: only commit if user/session hasn't changed
+          if (get().userId !== requestedUserId || get().token !== requestedToken) return;
+
+          // Standardize: ensure favorites items are objects with an 'id' property
+          const normalizedList = (remoteList || []).map(id => 
+            typeof id === "object" ? id : { id }
+          );
+          set({ favorites: normalizedList });
+        } catch (err) {
+          console.error("Favorites sync failed:", err);
+        }
+      },
 
       // ── async sync actions ───────────────────────────────────────────────
       syncWatchlistWithBackend: async () => {

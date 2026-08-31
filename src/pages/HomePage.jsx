@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTrending, usePopularActors, useTopRated, useNowPlaying, useMoviesByActor } from "../hooks/useTMDB";
 import { useRecommendations } from "../hooks/useBackend";
 import { useVeloraStore } from "../store/useVeloraStore";
+import { useWatchlistMinimal } from "../hooks/useMovieQueries";
 import ScrollRow from "../components/ScrollRow";
 import MovieCard from "../components/MovieCard";
 import MovieRow from "../components/MovieRow";
@@ -114,7 +115,10 @@ function ActorMovieSection({ actor, onSelect }) {
 
 export default function HomePage() {
   const { onMovieSelect } = useOutletContext() ?? {};
-  const { selectedActors, userId, activeMood } = useVeloraStore();
+  const { selectedActors, userId, activeMood, favorites } = useVeloraStore();
+
+  const favQueries = useWatchlistMinimal(favorites);
+  const fullFavorites = favQueries.map((q) => q.data).filter(Boolean);
 
   const MOOD_TO_GENRE = {
     "relaxed": 35,    // Comedy
@@ -197,6 +201,15 @@ export default function HomePage() {
           error={recommendations.isError}
           onSelect={onMovieSelect}
         />
+
+        {favorites.length > 0 && (
+          <MovieRow
+            title="Your Favorites"
+            movies={fullFavorites}
+            onSelect={onMovieSelect}
+            accent="brand"
+          />
+        )}
 
         {/* 2. Based on Favorite Actors */}
         {activeMood === "All" && selectedActors.slice(0, 3).map((actor) => (

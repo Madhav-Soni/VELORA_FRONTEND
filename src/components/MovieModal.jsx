@@ -17,10 +17,10 @@ const MetaBadge = ({ children, icon, color = "text-white/40" }) => (
 
 export default function MovieModal({ movieId, onClose }) {
   const { data: movie, isLoading } = useMovieDetails(movieId);
-  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist, addToFavorites, removeFromFavorites, isInFavorites } = useVeloraStore();
+  const { userId, addToWatchlistAsync, removeFromWatchlistAsync, isInWatchlist, addToFavoritesAsync, removeFromFavoritesAsync, isInFavorites } = useVeloraStore();
   const inWatchlist = movie ? isInWatchlist(movie.id) : false;
   const inFavorites = movie ? isInFavorites(movie.id) : false;
-
+  
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
@@ -170,7 +170,7 @@ export default function MovieModal({ movieId, onClose }) {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => inFavorites ? removeFromFavorites(movie.id) : addToFavorites(movie)}
+                        onClick={() => inFavorites ? removeFromFavoritesAsync(movie.id) : addToFavoritesAsync(movie)}
                         className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-black uppercase tracking-[0.15em] border-2 transition-all duration-300 ${inFavorites
                             ? "bg-pink-500/20 border-pink-500 text-pink-400"
                             : "bg-white/5 border-white/10 text-white/60 hover:border-pink-500/50 hover:text-pink-400"

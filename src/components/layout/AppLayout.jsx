@@ -9,12 +9,16 @@ import { tmdbExt } from "../../api/tmdb";
 
 export default function AppLayout() {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
-  const { userId, watchlist, setWatchlist } = useVeloraStore();
+  const { userId, watchlist, setWatchlist, favorites, setFavorites } = useVeloraStore();
 
   // Prevents double-hydration on re-renders
   const hydratedRef = useRef(false);
   // Skips the very first watchlist change (the hydration itself)
   const skipSyncRef = useRef(true);
+
+  // Separate refs for favorites hydration and sync
+  const hydratedFavoritesRef = useRef(false);
+  const skipFavoritesSyncRef = useRef(true);
 
   // ── 1. Watch History Sync (fire-and-forget) ───────────────────────────────
   useEffect(() => {
@@ -30,10 +34,10 @@ export default function AppLayout() {
     if (!userId) {
       hydratedRef.current = false;
       skipSyncRef.current = true;
+      hydratedFavoritesRef.current = false;
+      skipFavoritesSyncRef.current = true;
       return;
     }
-    if (hydratedRef.current) return;
-    hydratedRef.current = true;
 
     const currentUserId = userId;
 
@@ -42,23 +46,46 @@ export default function AppLayout() {
     syncPreferencesWithBackend().catch(console.error);
 
     // Load Watchlist
-    backend
-      .getWatchlist(currentUserId)
-      .then((ids) => {
-        if (isCancelled) return;
-        // Store only basic objects with IDs to avoid overfetching
-        const basicMovies = (ids || []).map((id) => (typeof id === "object" ? id : { id }));
-        setWatchlist(basicMovies);
-        // Allow outgoing sync after hydration settles
-        setTimeout(() => {
-          if (!isCancelled) skipSyncRef.current = false;
-        }, 0);
-      })
-      .catch((err) => {
-        if (isCancelled) return;
-        console.error("Watchlist hydration failed:", err);
-        skipSyncRef.current = false;
-      });
+    if (!hydratedRef.current) {
+      hydratedRef.current = true;
+      backend
+        .getWatchlist(currentUserId)
+        .then((ids) => {
+          if (isCancelled) return;
+          // Store only basic objects with IDs to avoid overfetching
+          const basicMovies = (ids || []).map((id) => (typeof id === "object" ? id : { id }));
+          setWatchlist(basicMovies);
+          // Allow outgoing sync after hydration settles
+          setTimeout(() => {
+            if (!isCancelled) skipSyncRef.current = false;
+          }, 0);
+        })
+        .catch((err) => {
+          if (isCancelled) return;
+          console.error("Watchlist hydration failed:", err);
+          skipSyncRef.current = false;
+        });
+    }
+
+    // Load Favorites
+    if (!hydratedFavoritesRef.current) {
+      hydratedFavoritesRef.current = true;
+      backend
+        .getFavorites(currentUserId)
+        .then((ids) => {
+          if (isCancelled) return;
+          const basicMovies = (ids || []).map((id) => (typeof id === "object" ? id : { id }));
+          setFavorites(basicMovies);
+          setTimeout(() => {
+            if (!isCancelled) skipFavoritesSyncRef.current = false;
+          }, 0);
+        })
+        .catch((err) => {
+          if (isCancelled) return;
+          console.error("Favorites hydration failed:", err);
+          skipFavoritesSyncRef.current = false;
+        });
+    }
 
     return () => {
       isCancelled = true;
@@ -72,6 +99,14 @@ export default function AppLayout() {
     const movieIds = watchlist.map((m) => m.id);
     backend.syncWatchlist(userId, movieIds).catch(console.error);
   }, [watchlist, userId]);
+
+  // ── 4. Sync local favorites TO backend on change ──────────────────────────
+  useEffect(() => {
+    if (!userId) return;
+    if (skipFavoritesSyncRef.current) return;
+    const movieIds = favorites.map((m) => m.id);
+    backend.syncFavorites(userId, movieIds).catch(console.error);
+  }, [favorites, userId]);
 
   return (
     <div className="min-h-screen bg-[#080808] flex">
