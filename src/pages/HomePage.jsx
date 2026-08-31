@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useTrending, usePopularActors, useTopRated, useNowPlaying, useMoviesByActor } from "../hooks/useTMDB";
 import { useRecommendations } from "../hooks/useBackend";
-import { useVeloraStore } from "../store/useVeloraStore";
+import { useVeloraStore, MOOD_TO_GENRE } from "../store/useVeloraStore";
 import { useWatchlistMinimal } from "../hooks/useMovieQueries";
 import ScrollRow from "../components/ScrollRow";
 import MovieCard from "../components/MovieCard";
@@ -119,15 +119,6 @@ export default function HomePage() {
 
   const favQueries = useWatchlistMinimal(favorites);
   const fullFavorites = favQueries.map((q) => q.data).filter(Boolean);
-
-  const MOOD_TO_GENRE = {
-    "relaxed": 35,    // Comedy
-    "excited": 28,    // Action
-    "melancholy": 18, // Drama
-    "tense": 53,      // Thriller
-    "romantic": 10749, // Romance
-    "thoughtful": 99   // Documentary
-  };
 
   const activeGenreId = MOOD_TO_GENRE[activeMood];
 
