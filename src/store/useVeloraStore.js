@@ -147,8 +147,7 @@ export const useVeloraStore = create(
         get().addToFavorites(movie); // Optimistic update
         if (userId) {
           try {
-            const updatedIds = get().favorites.map((m) => m.id);
-            await backend.syncFavorites(userId, updatedIds);
+            await backend.addToFavorites(userId, movie.id);
             if (queryClient) {
               queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
             }
@@ -165,8 +164,7 @@ export const useVeloraStore = create(
         get().removeFromFavorites(movieId); // Optimistic update
         if (userId) {
           try {
-            const updatedIds = get().favorites.map((m) => m.id);
-            await backend.syncFavorites(userId, updatedIds);
+            await backend.removeFromFavorites(userId, movieId);
             if (queryClient) {
               queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
             }
@@ -243,8 +241,7 @@ export const useVeloraStore = create(
         get().addToWatchlist(movie); // Optimistic update
         if (userId) {
           try {
-            const updatedIds = get().watchlist.map((m) => m.id);
-            await backend.syncWatchlist(userId, updatedIds);
+            await backend.addToWatchlist(userId, movie.id);
             if (queryClient) {
               queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
             }
@@ -261,8 +258,7 @@ export const useVeloraStore = create(
         get().removeFromWatchlist(movieId); // Optimistic update
         if (userId) {
           try {
-            const updatedIds = get().watchlist.map((m) => m.id);
-            await backend.syncWatchlist(userId, updatedIds);
+            await backend.removeFromWatchlist(userId, movieId);
             if (queryClient) {
               queryClient.invalidateQueries({ queryKey: ["recommendations", userId] });
             }

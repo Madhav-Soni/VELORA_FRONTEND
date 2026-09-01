@@ -79,12 +79,24 @@ export const backend = {
   syncWatchlist: (userId, movieIds) =>
     api.post(ENDPOINTS.WATCHLIST_SYNC(userId), { movieIds }).then((res) => res.data),
 
+  addToWatchlist: (userId, movieId) =>
+    api.post(`/watchlist/add/${userId}`, { movieId }).then((res) => res.data),
+
+  removeFromWatchlist: (userId, movieId) =>
+    api.post(`/watchlist/remove/${userId}`, { movieId }).then((res) => res.data),
+
   // Favorites
   getFavorites: (userId) =>
     api.get(ENDPOINTS.FAVORITES(userId)).then((res) => res.data),
 
   syncFavorites: (userId, movieIds) =>
     api.post(ENDPOINTS.FAVORITES_SYNC(userId), { movieIds }).then((res) => res.data),
+
+  addToFavorites: (userId, movieId) =>
+    api.post(`/favorites/add/${userId}`, { movieId }).then((res) => res.data),
+
+  removeFromFavorites: (userId, movieId) =>
+    api.post(`/favorites/remove/${userId}`, { movieId }).then((res) => res.data),
 
   // History
   getWatchHistory: (userId) =>
