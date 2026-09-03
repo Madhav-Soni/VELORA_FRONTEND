@@ -26,7 +26,12 @@ export default function PreferencesPage() {
 
   const [showActorPicker, setShowActorPicker] = useState(false);
   const [localActors, setLocalActors] = useState(selectedActors);
-  const [showSavedToast, setShowSavedToast] = useState(false);
+  const [toast, setToast] = useState(null); // { type: "success" | "error", text: string }
+
+  const showToast = (type, text) => {
+    setToast({ type, text });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const toggleLocalActor = (actor) => {
     const slim = { id: actor.id, name: actor.name, profile_path: actor.profile_path ?? null };
@@ -60,6 +65,7 @@ export default function PreferencesPage() {
   };
 
   const handleRemoveActor = async (actorId) => {
+    const previousActors = selectedActors;
     const nextActors = selectedActors.filter((a) => a.id !== actorId);
     setSelectedActors(nextActors);
     if (userId) {
@@ -74,6 +80,8 @@ export default function PreferencesPage() {
         });
       } catch (err) {
         console.error("Failed to sync actor removal:", err);
+        setSelectedActors(previousActors);
+        showToast("error", "Failed to remove actor");
       }
     }
   };
@@ -82,7 +90,7 @@ export default function PreferencesPage() {
     toggleGenre(genre);
     if (userId) {
       // Get fresh state after toggle
-      const { selectedGenres: nextGenres, selectedMood } = useVeloraStore.getState();
+      const { selectedGenres: nextGenres } = useVeloraStore.getState();
       try {
         await backend.updatePreferences(userId, {
           favoriteActors:
@@ -96,6 +104,8 @@ export default function PreferencesPage() {
         });
       } catch (err) {
         console.error("Failed to sync genres:", err);
+        toggleGenre(genre); // Revert optimistic toggle
+        showToast("error", "Failed to update genres");
       }
     }
   };
@@ -221,17 +231,23 @@ export default function PreferencesPage() {
         </div>
       </section>
 
-      {/* Saved Toast */}
+      {/* Toast Notification */}
       <AnimatePresence>
-        {showSavedToast && (
+        {toast && (
           <motion.div
             initial={{ opacity: 0, y: 40, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 40, x: "-50%" }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 glass px-8 py-4 rounded-2xl border-brand/50 shadow-2xl flex items-center gap-4"
+            className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-50 glass px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-4 ${
+              toast.type === "error" ? "border-red-500/50" : "border-brand/50"
+            }`}
           >
-            <div className="w-6 h-6 rounded-full bg-brand flex items-center justify-center text-white text-xs">✓</div>
-            <span className="text-xs font-black text-white uppercase tracking-widest">Preferences Updated</span>
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs ${
+              toast.type === "error" ? "bg-red-500" : "bg-brand"
+            }`}>
+              {toast.type === "error" ? "✕" : "✓"}
+            </div>
+            <span className="text-xs font-black text-white uppercase tracking-widest">{toast.text}</span>
           </motion.div>
         )}
       </AnimatePresence>

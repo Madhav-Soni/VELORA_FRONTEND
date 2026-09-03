@@ -144,6 +144,10 @@ export default function HomePage() {
   const heroMovie = heroPool[heroIndex] ?? null;
 
   useEffect(() => {
+    setHeroIndex(0);
+  }, [activeMood]);
+
+  useEffect(() => {
     if (heroPool.length <= 1) return;
     const timer = setInterval(() => {
       setHeroIndex((i) => (i + 1) % heroPool.length);

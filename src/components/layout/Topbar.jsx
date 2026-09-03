@@ -36,7 +36,7 @@ export default function Topbar({ onMovieSelect }) {
   const [input, setInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const { activeMood, setActiveMood, userName, resetPreferences } = useVeloraStore();
+  const { activeMood, setActiveMood, userName, logout } = useVeloraStore();
   const [focusedIdx, setFocusedIdx] = useState(-1);
   const [scrolled, setScrolled] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -278,7 +278,7 @@ export default function Topbar({ onMovieSelect }) {
               </div>
               <div className="border-t border-white/5 p-2">
                 <button
-                  onClick={() => { resetPreferences(); navigate("/"); }}
+                  onClick={() => { logout(); navigate("/"); }}
                   className="w-full flex items-center gap-4 px-5 py-3 text-xs font-bold text-brand/50 hover:text-brand hover:bg-brand/5 transition-all rounded-2xl text-left"
                 >
                   <span className="text-base">🚪</span> Sign Out

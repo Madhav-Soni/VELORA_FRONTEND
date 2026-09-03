@@ -33,7 +33,11 @@ export default function MovieModal({ movieId, onClose }) {
   }, [onClose]);
 
   const cast = movie?.credits?.cast?.slice(0, 10) ?? [];
-  const providers = movie?.["watch/providers"]?.results?.US?.flatrate ?? [];
+  const providerResults = movie?.["watch/providers"]?.results ?? {};
+  const providers = providerResults.US?.flatrate
+    ?? providerResults.GB?.flatrate
+    ?? providerResults.IN?.flatrate
+    ?? [];
   const trailer = movie?.videos?.results?.find((v) => v.type === "Trailer" && v.site === "YouTube");
 
   return (

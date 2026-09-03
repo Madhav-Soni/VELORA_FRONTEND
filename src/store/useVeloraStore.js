@@ -1,3 +1,4 @@
+const mutatingMovieIds = new Set();
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { backend } from "../api/backend";
@@ -142,6 +143,8 @@ export const useVeloraStore = create(
       setFavorites: (list) => set({ favorites: list }),
 
       addToFavoritesAsync: async (movie) => {
+        if (mutatingMovieIds.has(movie.id)) return;
+        mutatingMovieIds.add(movie.id);
         const previousFavorites = get().favorites;
         const { userId } = get();
         get().addToFavorites(movie); // Optimistic update
@@ -154,11 +157,17 @@ export const useVeloraStore = create(
           } catch (err) {
             console.error("Backend favorites sync failed:", err);
             set({ favorites: previousFavorites });
+          } finally {
+            mutatingMovieIds.delete(movie.id);
           }
+        } else {
+          mutatingMovieIds.delete(movie.id);
         }
       },
 
       removeFromFavoritesAsync: async (movieId) => {
+        if (mutatingMovieIds.has(movieId)) return;
+        mutatingMovieIds.add(movieId);
         const previousFavorites = get().favorites;
         const { userId } = get();
         get().removeFromFavorites(movieId); // Optimistic update
@@ -171,7 +180,11 @@ export const useVeloraStore = create(
           } catch (err) {
             console.error("Backend favorites sync failed:", err);
             set({ favorites: previousFavorites });
+          } finally {
+            mutatingMovieIds.delete(movieId);
           }
+        } else {
+          mutatingMovieIds.delete(movieId);
         }
       },
 
@@ -236,6 +249,8 @@ export const useVeloraStore = create(
       },
 
       addToWatchlistAsync: async (movie) => {
+        if (mutatingMovieIds.has(movie.id)) return;
+        mutatingMovieIds.add(movie.id);
         const previousWatchlist = get().watchlist;
         const { userId } = get();
         get().addToWatchlist(movie); // Optimistic update
@@ -248,11 +263,17 @@ export const useVeloraStore = create(
           } catch (err) {
             console.error("Backend watchlist sync failed:", err);
             set({ watchlist: previousWatchlist });
+          } finally {
+            mutatingMovieIds.delete(movie.id);
           }
+        } else {
+          mutatingMovieIds.delete(movie.id);
         }
       },
 
       removeFromWatchlistAsync: async (movieId) => {
+        if (mutatingMovieIds.has(movieId)) return;
+        mutatingMovieIds.add(movieId);
         const previousWatchlist = get().watchlist;
         const { userId } = get();
         get().removeFromWatchlist(movieId); // Optimistic update
@@ -265,7 +286,11 @@ export const useVeloraStore = create(
           } catch (err) {
             console.error("Backend watchlist sync failed:", err);
             set({ watchlist: previousWatchlist });
+          } finally {
+            mutatingMovieIds.delete(movieId);
           }
+        } else {
+          mutatingMovieIds.delete(movieId);
         }
       },
 
